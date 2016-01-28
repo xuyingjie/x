@@ -66,17 +66,17 @@
       add() {
         this.$dispatch('add')
       },
-      logout() {
-        localStorage.removeItem('user')
-        this.$dispatch('auth', false)
-      },
       login() {
         get('user', {responseType: 'arraybuffer'}).then(buf => {
           decrypt(this.passwd, this.iv, buf).then(out => {
             localStorage.user = arrayBufferToStr(out)
-            this.$dispatch('auth', true)
+            this.$dispatch('login')
           })
         })
+      },
+      logout() {
+        localStorage.removeItem('user')
+        this.$dispatch('logout')
       },
     }
   }

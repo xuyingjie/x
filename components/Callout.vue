@@ -24,11 +24,11 @@
   <div class="row card">
     <section>
       <img :src="src" v-for="src in img">
-      {{{item.text}}}
+      {{{text}}}
     </section>
     <nav>
       <span class="item">{{new Date(item.lastChange).toDateString()}}</span>
-      <button type="button" @click="edit(item.id)">EDIT</button>
+      <button type="button" @click="edit(item.id)" v-show="status.auth">EDIT</button>
     </nav>
   </div>
 </template>
@@ -36,34 +36,18 @@
 
 <script lang="babel">
   import marked from 'marked'
-  import { url, dns, get, decStr } from '../tools'
+  import { dns } from '../tools'
 
   export default {
-    props: ['id'],
+    props: ['item', 'status'],
 
-    data() {
-      return {
-        item: {
-          id: '',
-          img: [],
-          text: '',
-          lastChange: '',
-        }
-      }
-    },
     computed: {
       img() {
         return this.item.img.map(id => `${dns}/img/${id}@.webp`)
+      },
+      text() {
+        return marked(this.item.text, { breaks: true, sanitize: true })
       }
-    },
-
-    compiled() {
-      get(`set/${this.id}`).then(out => {
-        decStr(out.text).then(str => {
-          out.text = marked(str, { breaks: true, sanitize: true })
-          this.item = out
-        })
-      })
     },
 
     methods: {

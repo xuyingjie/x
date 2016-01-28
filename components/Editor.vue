@@ -60,7 +60,7 @@
 </template>
 
 <script lang="babel">
-  import { upload, form, encStr } from '../tools'
+  import { upload, form } from '../tools'
 
   export default {
     props: ['item'],
@@ -76,16 +76,13 @@
         this.$dispatch('cancel')
       },
       save() {
-        encStr(this.item.text).then(str => {
-          this.item.text = str
-          this.item.lastChange = new Date().toString()
-          if (!this.item.id) {
-            this.item.id = Date.now()
-            this.$dispatch('save', this.item, true)
-          } else {
-            this.$dispatch('save', this.item, false)
-          }
-        })
+        this.item.lastChange = Date.now()
+        if (!this.item.id) {
+          this.item.id = Date.now()
+          this.$dispatch('save', this.item, true)
+        } else {
+          this.$dispatch('save', this.item, false)
+        }
       },
 
       readAndUpload(event) {
