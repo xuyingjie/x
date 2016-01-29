@@ -99,22 +99,21 @@ export function encStr(str) {
   return new Promise(resolve => {
     let user = JSON.parse(localStorage.user)
     let buf = strToArrayBuffer(str)
-    encrypt(user.passwd, user.iv, buf).then(out => {
-      resolve(arrayBufferToStr(out))
+    encrypt(user.passwd, buf).then(obj => {
+      resolve(obj)
     })
   })
 }
 
-export function decStr(str) {
+export function decStr(obj) {
   return new Promise(resolve => {
     if (localStorage.user) {
       let user = JSON.parse(localStorage.user)
-      let buf = strToArrayBuffer(str)
-      decrypt(user.passwd, user.iv, buf).then(out => {
+      decrypt(user.passwd, obj).then(out => {
         resolve(arrayBufferToStr(out))
       })
     } else {
-      resolve(str)
+      resolve(JSON.stringify(obj))
     }
   })
 }
@@ -139,17 +138,19 @@ function importKey(str) {
   })
 }
 
-export function encrypt(passwd, iv, data) {
+export function encrypt(passwd, data) {
   return new Promise((resolve, reject) => {
     importKey(passwd)
       .then(key => {
+
+        let iv = window.crypto.getRandomValues(new Uint8Array(12))
         window.crypto.subtle.encrypt({
           name: 'AES-GCM',
 
           // Don't re-use initialization vectors!
           // Always generate a new iv every time your encrypt!
           // Recommended to use 12 bytes length
-          iv: strToArrayBuffer(iv),
+          iv,
 
           // Additional authentication data (optional)
           // additionalData: ArrayBuffer,
@@ -162,7 +163,7 @@ export function encrypt(passwd, iv, data) {
         )
           .then(encrypted => {
             // returns an ArrayBuffer containing the encrypted data
-            resolve(encrypted)
+            resolve({ data: [...new Uint16Array(encrypted)], iv: [...iv] })
           })
           .catch(err => {
             reject(err)
@@ -171,18 +172,18 @@ export function encrypt(passwd, iv, data) {
   })
 }
 
-export function decrypt(passwd, iv, data) {
+export function decrypt(passwd, {iv, data}) {
   return new Promise((resolve, reject) => {
     importKey(passwd)
       .then(key => {
         window.crypto.subtle.decrypt({
           name: 'AES-GCM',
-          iv: strToArrayBuffer(iv), // The initialization vector you used to encrypt
+          iv: new Uint8Array(iv), // The initialization vector you used to encrypt
           // additionalData: ArrayBuffer, //The addtionalData you used to encrypt (if any)
           tagLength: 128, // The tagLength you used to encrypt (if any)
         },
           key, // from generateKey or importKey above
-          data // ArrayBuffer of the data
+          new Uint16Array(data).buffer // ArrayBuffer of the data
         )
           .then(decrypted => {
             // returns an ArrayBuffer containing the decrypted data

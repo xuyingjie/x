@@ -15,9 +15,6 @@
     <label>Random Password
       <input type="text" v-model="user.passwd" />
     </label>
-    <label>iv
-      <input type="text" v-model="user.iv" />
-    </label>
     <label>AK
       <input type="text" v-model="user.AK" />
     </label>
@@ -41,7 +38,6 @@
           AK: '',
           SK: '',
           passwd: '',
-          iv: '',
         },
       }
     },
@@ -51,10 +47,10 @@
         localStorage.user = JSON.stringify(this.user)
 
         let buf = strToArrayBuffer(JSON.stringify(this.user))
-        encrypt(this.secret, this.user.iv, buf).then(out => {
-          let f = form(this.name, out)
+        encrypt(this.secret, buf).then(obj => {
+          let f = form(this.name, JSON.stringify(obj))
           upload(f).then(() => {
-            location.replace('#')
+            console.log('success')
           })
         })
       },

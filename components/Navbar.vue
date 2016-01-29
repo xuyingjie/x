@@ -40,9 +40,9 @@
       </template>
 
       <form @submit.prevent="login" v-else>
-        <input type="text" placeholder="Name" v-model="iv">
+        <input type="text" placeholder="Name" v-model="name">
         <input type="password" placeholder="Password" v-model="passwd">
-        <input class="button" type="submit" value="LOGIN" @click="login">
+        <input class="button" type="submit" value="LOGIN">
       </form>
 
     </nav>
@@ -57,8 +57,8 @@
 
     data() {
       return {
+        name: '',
         passwd: '',
-        iv: '',
       }
     },
 
@@ -67,8 +67,8 @@
         this.$dispatch('add')
       },
       login() {
-        get('user', {responseType: 'arraybuffer'}).then(buf => {
-          decrypt(this.passwd, this.iv, buf).then(out => {
+        get(this.name).then(obj => {
+          decrypt(this.passwd, obj).then(out => {
             localStorage.user = arrayBufferToStr(out)
             this.$dispatch('login')
           })

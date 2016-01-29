@@ -68,12 +68,8 @@ var app = new Vue({
       this.status.edit = true
     },
     edit(id) {
-      this.list.forEach((el, i) => {
-        if (el === id) {
-          this.current = Object.assign({}, this.set[i])
-          this.status.edit = true
-        }
-      })
+      this.current = Object.assign({}, this.set.filter(el => el.id === id)[0])
+      this.status.edit = true
     },
     save(item, newItem) {
       let l = [...this.list]
@@ -82,16 +78,12 @@ var app = new Vue({
         l.push(item.id)
         s.push(item)
       } else {
-        l.forEach((el, i) => {
-          if (el === item.id) {
-            s[i] = item
-          }
-        })
+        s = s.map(el => el.id === item.id ? item : el)
       }
 
-      encStr(item.text).then(str => {
+      encStr(item.text).then(obj => {
         let x = Object.assign({}, item)
-        x.text = str
+        x.text = obj
 
         let f = form(`set/${item.id}`, JSON.stringify(x))
         upload(f).then(() => {
