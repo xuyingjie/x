@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './components/App.vue'
 import Join from './components/Join.vue'
-import { get, upload, form, encStr, decStr } from './tools'
+import { get, upload, encStr, decStr } from './tools'
 
 // Vue.config.debug = true
 var app = new Vue({
@@ -30,15 +30,14 @@ var app = new Vue({
 
   methods: {
     cache() {
-      get('list').then(out => {
+      get('list', {responseType: 'json'}).then(out => {
         this.list = out.list
         this.set = []
         this.list.forEach(id => {
-          get(`set/${id}`).then(out => {
-            decStr(out.text).then(str => {
-              out.text = str
+          get(`set/${id}`).then(data => {
+            decStr(data).then(item => {
               // this.set.$set(i, out)  // error?
-              this.set.push(out)  // order?
+              this.set.push(item)  // order?
             })
           })
         })
@@ -81,15 +80,10 @@ var app = new Vue({
         s = s.map(el => el.id === item.id ? item : el)
       }
 
-      encStr(item.text).then(obj => {
-        let x = Object.assign({}, item)
-        x.text = obj
-
-        let f = form(`set/${item.id}`, JSON.stringify(x))
-        upload(f).then(() => {
+      encStr(item).then(enc => {
+        upload(`set/${item.id}`, enc).then(() => {
           if (newItem) {
-            let f = form(`list`, JSON.stringify({ list: l }))
-            upload(f).then(() => {
+            upload(`list`, JSON.stringify({ list: l })).then(() => {
               this.list = l
               this.set = s
               this.status.edit = false

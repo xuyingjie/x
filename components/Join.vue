@@ -26,7 +26,7 @@
 </template>
 
 <script lang="babel">
-  import { upload, form, encrypt, strToArrayBuffer } from '../tools'
+  import { upload, encrypt, strToArrayBuffer } from '../tools'
 
   export default {
     data() {
@@ -47,9 +47,8 @@
         localStorage.user = JSON.stringify(this.user)
 
         let buf = strToArrayBuffer(JSON.stringify(this.user))
-        encrypt(this.secret, buf).then(obj => {
-          let f = form(this.name, JSON.stringify(obj))
-          upload(f).then(() => {
+        encrypt(this.secret, buf).then(enc => {
+          upload(this.name, enc).then(() => {
             console.log('success')
           })
         })

@@ -60,7 +60,7 @@
 </template>
 
 <script lang="babel">
-  import { upload, form } from '../tools'
+  import { upload } from '../tools'
 
   export default {
     props: ['item'],
@@ -91,8 +91,7 @@
         let reader = new FileReader()
         reader.onload = () => {
           let id = Date.now()
-          let f = form(`img/${id}`, reader.result) // type: file.type,
-          upload(f).then(() => {
+          upload(`img/${id}`, reader.result).then(() => {
             this.item.img.push(id)
             this.uploadStatus = false
           })

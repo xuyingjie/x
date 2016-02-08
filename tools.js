@@ -1,4 +1,4 @@
-const bucket = ''
+const bucket = 'whitehairpin'
 const url = `https://${bucket}.oss-cn-beijing.aliyuncs.com`
 export const dns = `http://${bucket}.img-cn-beijing.aliyuncs.com`
 
@@ -7,7 +7,7 @@ export function get(key, { responseType, progress } = {}) {
 
     let xhr = new XMLHttpRequest()
     xhr.open('GET', `${url}/${key}`)
-    xhr.responseType = responseType ? responseType : 'json'
+    xhr.responseType = responseType ? responseType : 'arraybuffer'
 
     if (progress) xhr.onprogress = (e) => {
       if (e.lengthComputable) progress.style.width = e.loaded / e.total * 100 + '%'
@@ -21,7 +21,7 @@ export function get(key, { responseType, progress } = {}) {
   })
 }
 
-export function upload(data, { progress } = {}) {
+export function upload(key, data, { progress } = {}) {
   return new Promise(resolve => {
 
     let xhr = new XMLHttpRequest()
@@ -35,10 +35,11 @@ export function upload(data, { progress } = {}) {
       resolve(xhr.response)
     }
 
-    xhr.send(data)
+    xhr.send(form(key, data))
   })
 }
 
+// type: file.type?
 export function form(key, data) {
   const user = JSON.parse(localStorage.user)
   const AK = user.AK
@@ -82,47 +83,65 @@ export function form(key, data) {
 export function arrayBufferToStr(buf) {
   return String.fromCharCode.apply(null, new Uint16Array(buf))
 }
-
 export function strToArrayBuffer(str) {
-  const buf = new ArrayBuffer(str.length * 2)
-  const bufView = new Uint16Array(buf)
-  for (let i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i)
-  }
-  return buf
+  return new Uint16Array([...str].map(s => s.charCodeAt(0))).buffer
 }
 
 //
 // WebCryptoAPI
 //
-export function encStr(str) {
+export function encStr(item) {
   return new Promise(resolve => {
     let user = JSON.parse(localStorage.user)
-    let buf = strToArrayBuffer(str)
-    encrypt(user.passwd, buf).then(obj => {
-      resolve(obj)
+    let buf = strToArrayBuffer(item.text)
+    encrypt(user.passwd, buf).then(data => {
+      let x = {
+        id: item.id,
+        img: item.img,
+        lastChange: item.lastChange
+      }
+      let b = strToArrayBuffer(JSON.stringify(x))
+      let c = set(new Uint16Array([b.byteLength/2]).buffer, b)
+      let out = set(c, data)
+      resolve(out)
     })
   })
 }
 
-export function decStr(obj) {
+export function decStr(data) {
   return new Promise(resolve => {
+    let x = new Uint16Array(data)
+    let len = x.subarray(0, 1)[0]
+    let str = String.fromCharCode.apply(null, x.subarray(1, len + 1))
+    let item = JSON.parse(str)
     if (localStorage.user) {
       let user = JSON.parse(localStorage.user)
-      decrypt(user.passwd, obj).then(out => {
-        resolve(arrayBufferToStr(out))
+      let enc = x.slice(len + 1)
+      decrypt(user.passwd, enc.buffer).then(out => {
+        item.text = arrayBufferToStr(out)
+        resolve(item)
       })
     } else {
-      resolve(JSON.stringify(obj))
+      item.text = ''
+      resolve(item)
     }
   })
 }
 
-function importKey(str) {
+// concat arrayBuffer
+function set(a, b) {
+  let out = new Uint8Array(a.byteLength + b.byteLength)
+  out.set(new Uint8Array(a))
+  out.set(new Uint8Array(b), a.byteLength)
+  return out.buffer
+}
+
+function importKey(passwd) {
   return new Promise((resolve, reject) => {
     window.crypto.subtle.importKey(
       'raw', // can be 'jwk' or 'raw'
-      strToArrayBuffer(str), { // this is the algorithm options
+      strToArrayBuffer(passwd),
+      { // this is the algorithm options
         name: 'AES-GCM',
       },
       false, // whether the key is extractable (i.e. can be used in exportKey)
@@ -163,7 +182,7 @@ export function encrypt(passwd, data) {
         )
           .then(encrypted => {
             // returns an ArrayBuffer containing the encrypted data
-            resolve({ data: [...new Uint16Array(encrypted)], iv: [...iv] })
+            resolve(set(iv.buffer, encrypted))
           })
           .catch(err => {
             reject(err)
@@ -172,18 +191,21 @@ export function encrypt(passwd, data) {
   })
 }
 
-export function decrypt(passwd, {iv, data}) {
+export function decrypt(passwd, data) {
+  let c = new Uint8Array(data)
+  let iv = c.subarray(0, 12)
+  let enc = c.slice(12)
   return new Promise((resolve, reject) => {
     importKey(passwd)
       .then(key => {
         window.crypto.subtle.decrypt({
           name: 'AES-GCM',
-          iv: new Uint8Array(iv), // The initialization vector you used to encrypt
+          iv, // The initialization vector you used to encrypt
           // additionalData: ArrayBuffer, //The addtionalData you used to encrypt (if any)
           tagLength: 128, // The tagLength you used to encrypt (if any)
         },
           key, // from generateKey or importKey above
-          new Uint16Array(data).buffer // ArrayBuffer of the data
+          enc.buffer // ArrayBuffer of the data
         )
           .then(decrypted => {
             // returns an ArrayBuffer containing the decrypted data
