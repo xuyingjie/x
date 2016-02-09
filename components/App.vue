@@ -10,7 +10,8 @@
 <template>
   <div>
     <Navbar :status="status"></Navbar>
-    <Callout transition="fade" :status="status" v-for="item in s" :item="item" v-show="!status.edit"></Callout>
+    <Callout transition="fade" :status="status" v-for="item in set" :item="item" v-show="!status.edit"></Callout>
+    <button type="button" @click="more" v-show="hasMore">MORE</button>
     <Editor :item="current" v-show="status.edit"></Editor>
   </div>
 </template>
@@ -21,11 +22,11 @@
   import Editor from './Editor.vue'
 
   export default {
-    props: ['set', 'status', 'current'],
+    props: ['set', 'status', 'current', 'hasMore'],
 
-    computed: {
-      s() {
-        return [...this.set].reverse()
+    methods: {
+      more() {
+        this.$dispatch('more')
       }
     },
 

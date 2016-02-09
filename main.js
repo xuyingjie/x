@@ -9,6 +9,7 @@ var app = new Vue({
   data: {
     list: [],
     set: [],
+    index: 0,
 
     status: {
       auth: false,
@@ -18,6 +19,12 @@ var app = new Vue({
     current: {},
 
     currentView: 'App'
+  },
+
+  computed: {
+    hasMore() {
+      return this.list.length > this.index
+    }
   },
 
   compiled() {
@@ -33,12 +40,16 @@ var app = new Vue({
       get('list', {responseType: 'json'}).then(out => {
         this.list = out.list
         this.set = []
-        this.list.forEach(id => {
-          get(`set/${id}`).then(data => {
-            decStr(data).then(item => {
-              // this.set.$set(i, out)  // error?
-              this.set.push(item)  // order?
-            })
+        this.load(5)
+      })
+    },
+    load(n) {
+      this.list.slice(this.index, this.index + n).forEach(id => {
+        get(`set/${id}`).then(data => {
+          decStr(data).then(item => {
+            // this.set.$set(i, out)  // error
+            this.set.push(item)  // order?
+            this.index += 1
           })
         })
       })
@@ -74,8 +85,8 @@ var app = new Vue({
       let l = [...this.list]
       let s = [...this.set]
       if (newItem) {
-        l.push(item.id)
-        s.push(item)
+        l = [item.id, ...l]
+        s = [item, ...s]
       } else {
         s = s.map(el => el.id === item.id ? item : el)
       }
@@ -94,6 +105,9 @@ var app = new Vue({
           }
         })
       })
+    },
+    more() {
+      this.load(5)
     },
 
   },
