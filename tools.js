@@ -5,7 +5,7 @@ export const dns = `http://${bucket}.img-cn-beijing.aliyuncs.com`
 export function get(key, { responseType, progress } = {}) {
   return new Promise(resolve => {
 
-    let xhr = new XMLHttpRequest()
+    var xhr = new XMLHttpRequest()
     xhr.open('GET', `${url}/${key}`)
     xhr.responseType = responseType ? responseType : 'arraybuffer'
 
@@ -24,7 +24,7 @@ export function get(key, { responseType, progress } = {}) {
 export function upload(key, data, { progress } = {}) {
   return new Promise(resolve => {
 
-    let xhr = new XMLHttpRequest()
+    var xhr = new XMLHttpRequest()
     xhr.open('POST', url)
 
     if (progress) xhr.upload.onprogress = (e) => {
@@ -45,11 +45,9 @@ export function form(key, data) {
   const AK = user.AK
   const SK = user.SK
 
-  let cache
+  var cache = 'no-cache'
   if (key.match('img/') !== null) {
     cache = 'public,max-age=8640000'
-  } else {
-    cache = 'no-cache'
   }
 
   const policyJson = {
@@ -93,17 +91,17 @@ export function strToArrayBuffer(str) {
 //
 export function encStr(item) {
   return new Promise(resolve => {
-    let user = JSON.parse(localStorage.user)
-    let buf = strToArrayBuffer(item.text)
+    var user = JSON.parse(localStorage.user)
+    var buf = strToArrayBuffer(item.text)
     encrypt(user.passwd, buf).then(data => {
-      let x = {
+      var x = {
         id: item.id,
         img: item.img,
         lastChange: item.lastChange
       }
-      let b = strToArrayBuffer(JSON.stringify(x))
-      let c = set(new Uint16Array([b.byteLength/2]).buffer, b)
-      let out = set(c, data)
+      var b = strToArrayBuffer(JSON.stringify(x))
+      var c = set(new Uint16Array([b.byteLength/2]).buffer, b)
+      var out = set(c, data)
       resolve(out)
     })
   })
@@ -111,10 +109,10 @@ export function encStr(item) {
 
 export function decStr(data) {
   return new Promise(resolve => {
-    let x = new Uint16Array(data)
-    let len = x.subarray(0, 1)[0]
-    let str = String.fromCharCode.apply(null, x.subarray(1, len + 1))
-    let item = JSON.parse(str)
+    var x = new Uint16Array(data)
+    var len = x.subarray(0, 1)[0]
+    var str = String.fromCharCode.apply(null, x.subarray(1, len + 1))
+    var item = JSON.parse(str)
     if (localStorage.user) {
       let user = JSON.parse(localStorage.user)
       let buf = data.slice((len + 1) * 2)
@@ -131,7 +129,7 @@ export function decStr(data) {
 
 // concat arrayBuffer
 function set(a, b) {
-  let out = new Uint8Array(a.byteLength + b.byteLength)
+  var out = new Uint8Array(a.byteLength + b.byteLength)
   out.set(new Uint8Array(a))
   out.set(new Uint8Array(b), a.byteLength)
   return out.buffer
@@ -163,7 +161,7 @@ export function encrypt(passwd, data) {
     importKey(passwd)
       .then(key => {
 
-        let iv = window.crypto.getRandomValues(new Uint8Array(12))
+        var iv = window.crypto.getRandomValues(new Uint8Array(12))
         window.crypto.subtle.encrypt({
           name: 'AES-GCM',
 

@@ -46,7 +46,7 @@
       join() {
         localStorage.user = JSON.stringify(this.user)
 
-        let buf = strToArrayBuffer(JSON.stringify(this.user))
+        var buf = strToArrayBuffer(JSON.stringify(this.user))
         encrypt(this.secret, buf).then(enc => {
           upload(this.name, enc).then(() => {
             console.log('success')

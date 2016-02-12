@@ -87,10 +87,10 @@
 
       readAndUpload(event) {
         this.uploadStatus = true
-        let file = event.target.files[0]
-        let reader = new FileReader()
+        var file = event.target.files[0]
+        var reader = new FileReader()
         reader.onload = () => {
-          let id = Date.now()
+          var id = Date.now()
           upload(`img/${id}`, reader.result).then(() => {
             this.item.img.push(id)
             this.uploadStatus = false

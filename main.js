@@ -82,8 +82,8 @@ var app = new Vue({
       this.status.edit = true
     },
     save(item, newItem) {
-      let l = [...this.list]
-      let s = [...this.set]
+      var l = [...this.list]
+      var s = [...this.set]
       if (newItem) {
         l = [item.id, ...l]
         s = [item, ...s]
@@ -118,7 +118,7 @@ var app = new Vue({
 
 // router
 function hashChange() {
-  let hash = location.hash.split('/')
+  var hash = location.hash.split('/')
   if (hash[1] === 'join') {
     app.currentView = 'Join'
   } else {
