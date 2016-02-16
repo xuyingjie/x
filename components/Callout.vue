@@ -1,15 +1,14 @@
 <style>
 .card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   background: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   margin: 1rem 0;
 }
-.card section {
+.card .collapse {
   padding: 16px;
+  max-height: 200px;
+  overflow: hidden;
 }
 .card nav {
   border-top: 1px solid rgba(0,0,0,.1);
@@ -22,10 +21,12 @@
 
 <template>
   <div class="row card">
-    <section>
-      <img :src="src" v-for="src in img">
-      {{{text}}}
-    </section>
+    <div class="collapse" @click="collapse($event)">
+      <section @click.stop>
+        <img :src="src" v-for="src in img">
+        {{{text}}}
+      </section>
+    </div>
     <nav>
       <span class="item">{{new Date(item.lastChange).toDateString()}}</span>
       <button type="button" @click="edit(item.id)" v-show="status.auth">EDIT</button>
@@ -51,6 +52,10 @@
     },
 
     methods: {
+      collapse(event) {
+        var maxHeight = event.target.style.maxHeight
+        event.target.style.maxHeight = (maxHeight === 'none') ? '200px' : 'none'
+      },
       edit(id) {
         this.$dispatch('edit', id)
       }

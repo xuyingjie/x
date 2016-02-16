@@ -28,7 +28,7 @@ export function upload(key, data, { progress } = {}) {
       xhr.open('POST', url)
 
       if (progress) xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) progress.style.width = e.loaded / e.total * 100 + '%'
+        if (e.lengthComputable) progress.style.width = (e.loaded === e.total) ? 0 : e.loaded / e.total * 100 + '%'
       }
 
       xhr.onload = () => {

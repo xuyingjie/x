@@ -5,10 +5,16 @@
 .fade-leave {
   animation: fadeOutDown .5s;
 }
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+}
 </style>
 
 <template>
-  <div>
+  <div class="main">
     <Navbar :status="status"></Navbar>
     <Callout transition="fade" :status="status" v-for="item in set" :item="item" v-show="!status.edit"></Callout>
     <button type="button" @click="more" v-show="hasMore">MORE</button>

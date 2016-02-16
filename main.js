@@ -16,7 +16,12 @@ var app = new Vue({
       edit: false,
     },
 
-    current: {},
+    current: {
+      id: 0,
+      img: [],
+      text: '',
+      lastChange: 0
+    },
 
     currentView: 'App'
   },
