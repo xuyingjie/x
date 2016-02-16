@@ -87,7 +87,7 @@
 
     computed: {
       url() {
-        return this.item.img.map(id => `${dns}/img/${id}@.webp`)
+        return this.item.img.map(dns)
       }
     },
 

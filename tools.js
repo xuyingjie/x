@@ -1,6 +1,6 @@
 const bucket = 'whitehairpin'
 const url = `http://${bucket}.oss-cn-beijing.aliyuncs.com`
-export const dns = `http://${bucket}.img-cn-beijing.aliyuncs.com`
+export const dns = (id) => `http://${bucket}.img-cn-beijing.aliyuncs.com/img/${id}@.webp`
 
 export function get(key, { responseType, progress } = {}) {
   return new Promise(resolve => {

@@ -42,19 +42,32 @@
   export default {
     props: ['item', 'status'],
 
+    data() {
+      return {
+        img: [],
+        load: false
+      }
+    },
+
     computed: {
-      img() {
-        return this.item.img.map(id => `${dns}/img/${id}@.webp`)
-      },
       text() {
         return marked(this.item.text, { breaks: true, sanitize: true })
       }
+    },
+
+    compiled() {
+      var id = this.item.img[0]
+      if (id) this.img.push(dns(id))
     },
 
     methods: {
       collapse(event) {
         var maxHeight = event.target.style.maxHeight
         event.target.style.maxHeight = (maxHeight === 'none') ? '200px' : 'none'
+        if (!this.load) {
+          this.img = this.item.img.map(dns)
+          this.load = true
+        }
       },
       edit(id) {
         this.$dispatch('edit', id)
