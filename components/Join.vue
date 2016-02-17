@@ -1,7 +1,6 @@
 <style>
   .join {
     max-width: 960px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }

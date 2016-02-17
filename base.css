@@ -201,6 +201,7 @@ pre > code {
 .row {
   max-width: 1080px;
   width: 100%;
+  margin: 0 auto;
 }
 nav {
   width: 100%;
@@ -260,6 +261,17 @@ input[type=text], input[type=password], textarea {
   background-color: #E6E6E6;
   font-size: 18px;
   padding: 0 1rem;
+}
+
+.layer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 1);
+  z-index: 20;
+  overflow: auto;
 }
 
 /*https://github.com/daneden/animate.css*/

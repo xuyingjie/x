@@ -33,6 +33,7 @@
       </div>
     </div>
     <button type="button" @click="more" v-show="hasMore">MORE</button>
+    <View :item="current" v-show="status.view"></View>
     <Editor :item="current" v-show="status.edit"></Editor>
   </div>
 </template>
@@ -40,6 +41,7 @@
 <script lang="babel">
   import Navbar from './Navbar.vue'
   import Callout from './Callout.vue'
+  import View from './View.vue'
   import Editor from './Editor.vue'
 
   export default {
@@ -51,6 +53,6 @@
       }
     },
 
-    components: { Navbar, Callout, Editor }
+    components: { Navbar, Callout, View, Editor }
   }
 </script>

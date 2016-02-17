@@ -1,49 +1,39 @@
 <style>
 .card {
-  width: 532px;
+  width: 530px;
   background: #fefefe;
   border-radius: 2px;
   box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
-.card section {
-  max-height: 568px;
-  overflow: hidden;
+.card:hover {
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
 }
-.card section.show {
-  max-height: none;
-}
-.card .content {
-  padding: 1rem;
+.card pre {
+  margin: 0;
 }
 .card nav {
   background-color: #f9f9f9;
 }
-.card nav span {
-  padding: 0 16px;
-  line-height: 36px;
-  color: #f9f9f9;
+.card nav button {
+  font-size: 18px;
 }
 </style>
 
 <template>
-  <div class="card">
-    <section id="{{item.id}}">
-      <img :src="src" v-for="src in img">
-      <div class="content" v-if="text.length">
-        {{{text}}}
-      </div>
-    </section>
-    <nav>
-      <span class="item" @click="collapse(item.id)">{{new Date(item.lastChange).toDateString()}}</span>
-      <button type="button" @click="edit(item.id)" v-show="status.auth">EDIT</button>
+  <div class="card" @click="view(item.id)">
+    <img :src="src" v-for="src in img">
+    <pre v-if="text.length"><code>{{text}}</code></pre>
+    <nav v-show="status.auth">
+      <span class="item" v-show="false">{{new Date(item.lastChange).toDateString()}}</span>
+      <button type="button" @click.stop="edit(item.id)">EDIT</button>
     </nav>
   </div>
 </template>
 
 
 <script lang="babel">
-  import marked from 'marked'
   import { dns } from '../tools'
 
   export default {
@@ -52,29 +42,20 @@
     data() {
       return {
         img: [],
-        load: false
-      }
-    },
-
-    computed: {
-      text() {
-        return marked(this.item.text, { breaks: true, sanitize: true })
+        text: ''
       }
     },
 
     compiled() {
       var id = this.item.img[0]
       if (id) this.img.push(dns(id))
+
+      this.text = this.item.text.split(/\n/).slice(0,9).join('\n')
     },
 
     methods: {
-      collapse(id) {
-        var el = document.getElementById(id)
-        el.classList.toggle('show')
-        if (!this.load) {
-          this.img = this.item.img.map(dns)
-          this.load = true
-        }
+      view(id) {
+        this.$dispatch('view', id)
       },
       edit(id) {
         this.$dispatch('edit', id)

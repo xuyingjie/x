@@ -14,6 +14,7 @@ var app = new Vue({
     status: {
       auth: false,
       edit: false,
+      view: false,
     },
 
     current: {
@@ -74,6 +75,7 @@ var app = new Vue({
     },
     cancel() {
       this.status.edit = false
+      this.status.view = false
     },
     add() {
       this.current = {
@@ -87,6 +89,10 @@ var app = new Vue({
     edit(id) {
       this.current = Object.assign({}, this.set.filter(el => el.id === id)[0])
       this.status.edit = true
+    },
+    view(id) {
+      this.current = Object.assign({}, this.set.filter(el => el.id === id)[0])
+      this.status.view = true
     },
     save(item, newItem) {
       var l = [...this.list]
