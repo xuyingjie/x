@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import App from './components/App.vue'
 import Join from './components/Join.vue'
+import File from './components/File.vue'
 import { get, upload, encStr, decStr } from './tools'
 
 // Vue.config.debug = true
-var app = new Vue({
+new Vue({
   el: 'body',
   data: {
     list: [],
@@ -33,8 +34,9 @@ var app = new Vue({
     }
   },
 
-  compiled() {
-    this.cache()
+  created() {
+    this.hashChange()
+    window.onhashchange = this.hashChange
 
     if (localStorage.user) {
       this.status.auth = true
@@ -42,6 +44,17 @@ var app = new Vue({
   },
 
   methods: {
+    // router
+    hashChange() {
+      var hash = location.hash.split('/')
+      if (hash[1] === 'join') {
+        this.currentView = 'Join'
+      } else if (hash[1] === 'file') {
+        this.currentView = 'File'
+      } else {
+        this.currentView = 'App'
+      }
+    },
     cache() {
       get('list', {responseType: 'json'}).then(out => {
         this.list = out.list
@@ -64,6 +77,9 @@ var app = new Vue({
   },
 
   events: {
+    init() {
+      this.cache()
+    },
     login() {
       this.cache()
       this.status.auth = true
@@ -125,19 +141,5 @@ var app = new Vue({
 
   },
 
-  components: { App, Join }
+  components: { App, Join, File }
 })
-
-
-// router
-function hashChange() {
-  var hash = location.hash.split('/')
-  if (hash[1] === 'join') {
-    app.currentView = 'Join'
-  } else {
-    app.currentView = 'App'
-  }
-}
-
-hashChange()
-window.onhashchange = hashChange

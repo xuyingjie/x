@@ -10,7 +10,7 @@ export function get(key, { responseType, progress } = {}) {
     xhr.responseType = responseType ? responseType : 'arraybuffer'
 
     if (progress) xhr.onprogress = (e) => {
-      if (e.lengthComputable) progress.style.width = e.loaded / e.total * 100 + '%'
+      if (e.lengthComputable) progress.style.width = (e.loaded === e.total) ? 0 : e.loaded / e.total * 100 + '%'
     }
 
     xhr.onload = () => {

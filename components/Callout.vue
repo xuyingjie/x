@@ -46,7 +46,7 @@
       }
     },
 
-    compiled() {
+    created() {
       var id = this.item.img[0]
       if (id) this.img.push(dns(id))
 

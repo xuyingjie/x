@@ -47,6 +47,10 @@
   export default {
     props: ['set', 'status', 'current', 'hasMore'],
 
+    compiled() {
+      this.$dispatch('init')
+    },
+
     methods: {
       more() {
         this.$dispatch('more')

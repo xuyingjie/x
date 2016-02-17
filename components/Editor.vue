@@ -31,14 +31,13 @@
     box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
   }
   .upload-box .button {
-    position: relative;
     will-change: box-shadow,transform;
     transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
   }
-  .button:hover {
+  .upload-box .button:hover {
     background-color: rgba(158,158,158,.2);
   }
-  .button:active {
+  .upload-box .button:active {
     background-color: rgba(158,158,158,.4);
   }
   .upload-box #progress {
