@@ -1,6 +1,6 @@
 <style>
   .layer {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
@@ -22,25 +22,37 @@
   }
   .editor textarea {
     width: 100%;
+    height: 540px;
     padding: 12px;
     border-bottom: none;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
   }
   .upload-box {
     display: flex;
     flex-wrap: wrap;
     margin: 20px 0;
   }
-  .upload-box .button {
+  .upload-box .button, .upload-box .thumbnail {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 
-    height: 80px;
-    width: 80px;
+    height: 90px;
+    width: 90px;
     padding: 0;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
-    line-height: inherit;
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+  }
+  .upload-box .button {
+    position: relative;
+    will-change: box-shadow,transform;
+    transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+  }
+  .button:hover {
+    background-color: rgba(158,158,158,.2);
+  }
+  .button:active {
+    background-color: rgba(158,158,158,.4);
   }
   .upload-box #progress {
     position: absolute;
@@ -63,12 +75,12 @@
           <i id="progress"></i>
         </label>
 
-        <label class="button" v-for="url in url">
+        <div class="thumbnail" v-for="url in url">
           <img :src="url">
-        </label>
+        </div>
       </div>
 
-      <textarea rows="20" v-el:textarea v-model="item.text"></textarea>
+      <textarea v-el:textarea v-model="item.text"></textarea>
 
       <div class="footer">
         <button type="button" @click="cancel">CANCEL</button>

@@ -9,14 +9,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 50px;
+  padding-top: 80px;
+}
+.fragment {
+  display: flex;
+  justify-content: space-between;
+}
+.fragment .col {
+  display: flex;
+  flex-direction: column;
 }
 </style>
 
 <template>
   <div class="main">
     <Navbar :status="status"></Navbar>
-    <Callout transition="fade" :status="status" v-for="item in set" :item="item" v-show="!status.edit"></Callout>
+    <div class="row fragment">
+      <div class="col">
+        <Callout transition="fade" :status="status" v-for="(index, item) in set" :item="item" v-if="!(index&1)"></Callout>
+      </div>
+      <div class="col">
+        <Callout transition="fade" :status="status" v-for="(index, item) in set" :item="item" v-if="index&1"></Callout>
+      </div>
+    </div>
     <button type="button" @click="more" v-show="hasMore">MORE</button>
     <Editor :item="current" v-show="status.edit"></Editor>
   </div>

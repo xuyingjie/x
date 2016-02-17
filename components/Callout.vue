@@ -1,34 +1,41 @@
 <style>
 .card {
-  background: #fff;
+  width: 532px;
+  background: #fefefe;
   border-radius: 2px;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  margin: 1rem 0;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+  margin-bottom: 1rem;
 }
-.card .collapse {
-  padding: 16px;
-  max-height: 200px;
+.card section {
+  max-height: 568px;
   overflow: hidden;
 }
+.card section.show {
+  max-height: none;
+}
+.card .content {
+  padding: 1rem;
+}
 .card nav {
-  border-top: 1px solid rgba(0,0,0,.1);
+  background-color: #f9f9f9;
 }
 .card nav span {
   padding: 0 16px;
   line-height: 36px;
+  color: #f9f9f9;
 }
 </style>
 
 <template>
-  <div class="row card">
-    <div class="collapse" @click="collapse($event)">
-      <section @click.stop>
-        <img :src="src" v-for="src in img">
+  <div class="card">
+    <section id="{{item.id}}">
+      <img :src="src" v-for="src in img">
+      <div class="content" v-if="text.length">
         {{{text}}}
-      </section>
-    </div>
+      </div>
+    </section>
     <nav>
-      <span class="item">{{new Date(item.lastChange).toDateString()}}</span>
+      <span class="item" @click="collapse(item.id)">{{new Date(item.lastChange).toDateString()}}</span>
       <button type="button" @click="edit(item.id)" v-show="status.auth">EDIT</button>
     </nav>
   </div>
@@ -61,9 +68,9 @@
     },
 
     methods: {
-      collapse(event) {
-        var maxHeight = event.target.style.maxHeight
-        event.target.style.maxHeight = (maxHeight === 'none') ? '200px' : 'none'
+      collapse(id) {
+        var el = document.getElementById(id)
+        el.classList.toggle('show')
         if (!this.load) {
           this.img = this.item.img.map(dns)
           this.load = true

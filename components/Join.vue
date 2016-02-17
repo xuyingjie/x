@@ -1,6 +1,12 @@
 <style>
   .join {
-    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .join label {
+    margin: 5px 0;
   }
 </style>
 

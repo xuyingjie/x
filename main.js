@@ -45,7 +45,8 @@ var app = new Vue({
       get('list', {responseType: 'json'}).then(out => {
         this.list = out.list
         this.set = []
-        this.load(5)
+        this.index = 0
+        this.load(10)
       })
     },
     load(n) {
@@ -68,6 +69,7 @@ var app = new Vue({
     },
     logout() {
       this.set = []
+      this.index = 0
       this.status.auth = false
     },
     cancel() {
@@ -112,7 +114,7 @@ var app = new Vue({
       })
     },
     more() {
-      this.load(5)
+      this.load(10)
     },
 
   },
