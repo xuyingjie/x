@@ -1,32 +1,30 @@
 <style>
-.card {
+.callout {
   width: 530px;
-  background: #fefefe;
-  border-radius: 2px;
-  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
-  margin-bottom: 20px;
   cursor: pointer;
 }
-.card:hover {
+.callout:hover {
   box-shadow: 0 0 20px rgba(0,0,0,0.3);
 }
-.card pre {
+.callout pre {
   margin: 0;
 }
-.card pre > code {
+.callout pre > code {
+  border: none;
+  background-color: #fefefe;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.card nav {
+.callout nav {
   background-color: #f9f9f9;
 }
-.card nav button {
+.callout nav button {
   font-size: 18px;
 }
 </style>
 
 <template>
-  <div class="card" @click="view(item.id)">
+  <div class="callout card" @click="view(item.id)">
     <Picture :id="this.item.img[0]" v-if="this.item.img[0]"></Picture>
     <pre v-if="text.length"><code>{{text}}</code></pre>
     <nav v-show="status.auth">

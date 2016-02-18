@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './components/App.vue'
 import Join from './components/Join.vue'
-import File from './components/File.vue'
 import { get, upload } from './tools'
 
 // Vue.config.debug = true
@@ -16,6 +15,7 @@ new Vue({
       auth: false,
       edit: false,
       view: false,
+      file: false,
     },
 
     current: {
@@ -49,8 +49,6 @@ new Vue({
       var hash = location.hash.split('/')
       if (hash[1] === 'join') {
         this.currentView = 'Join'
-      } else if (hash[1] === 'file') {
-        this.currentView = 'File'
       } else {
         this.currentView = 'App'
       }
@@ -90,6 +88,7 @@ new Vue({
     cancel() {
       this.status.edit = false
       this.status.view = false
+      this.status.file = false
     },
     add() {
       this.current = {
@@ -107,6 +106,9 @@ new Vue({
     view(id) {
       this.current = Object.assign({}, this.set.filter(el => el.id === id)[0])
       this.status.view = true
+    },
+    file() {
+      this.status.file = true
     },
     save(item, newItem) {
       var l = [...this.list]
@@ -137,5 +139,5 @@ new Vue({
 
   },
 
-  components: { App, Join, File }
+  components: { App, Join }
 })

@@ -146,7 +146,8 @@ function form(key, data) {
 
 
 function arrayBufferToStr(buf) {
-  return String.fromCharCode.apply(null, new Uint16Array(buf))
+  // return String.fromCharCode.apply(null, new Uint16Array(buf))  // >100kb string -> chrome 'Unhandled promise rejection RangeError: Maximum call stack size exceeded'
+  return (new Uint16Array(buf)).reduce((str, x) => str + String.fromCharCode(x), '')
 }
 function strToArrayBuffer(str) {
   // return Uint16Array.from([...str], s => s.charCodeAt(0)).buffer

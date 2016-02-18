@@ -1,18 +1,6 @@
 <style>
-  .bar {
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 10;
-
-    width: 100%;
-    height: 64px;
-    line-height: 64px;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 1px 8px rgba(0,0,0,.3);
-    margin-bottom: 1rem;
+  .bar nav {
+    justify-content: space-between;
   }
   .bar form {
     width: 100%;
@@ -28,17 +16,22 @@
 <template>
   <div class="bar">
     <nav class="row">
-      <template v-if="status.auth">
-        <h1 class="item">TITLE</h1>
-        <button type="button" @click="add">ADD</button>
-        <button type="button" @click="logout">LOGOUT</button>
-      </template>
 
-      <form @submit.prevent="login" v-else>
-        <input type="text" placeholder="Name" v-model="name">
-        <input type="password" placeholder="Password" v-model="passwd">
-        <button type="submit">LOGIN</button>
-      </form>
+      <h1 style="cursor:pointer;" @click="back" v-if="status.view||status.edit||status.file">BACK</h1>
+      <template v-else>
+        <template v-if="status.auth">
+          <h1 class="item">TITLE</h1>
+          <button type="button" @click="add">ADD</button>
+          <button type="button" @click="file">FILE</button>
+          <button type="button" @click="logout">LOGOUT</button>
+        </template>
+
+        <form @submit.prevent="login" v-else>
+          <input type="text" placeholder="Name" v-model="name">
+          <input type="password" placeholder="Password" v-model="passwd">
+          <button type="submit">LOGIN</button>
+        </form>
+      </template>
 
     </nav>
   </div>
@@ -70,6 +63,12 @@
       logout() {
         localStorage.removeItem('user')
         this.$dispatch('logout')
+      },
+      back() {
+        this.$dispatch('cancel')
+      },
+      file() {
+        this.$dispatch('file')
       },
     }
   }

@@ -1,17 +1,17 @@
 <style>
+.fadedown-enter {
+  animation: fadeInDown .3s;
+}
+.fadedown-leave {
+  animation: fadeOutDown .3s;
+}
 .fade-enter {
-  animation: fadeInDown .5s;
+  animation: fadeIn .1s;
 }
 .fade-leave {
-  animation: fadeOutDown .5s;
+  animation: fadeOut .1s;
 }
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 80px;
-}
-.fragment {
+.fragment > .row {
   display: flex;
   justify-content: space-between;
 }
@@ -19,23 +19,30 @@
   display: flex;
   flex-direction: column;
 }
+.fragment > button {
+  display: block;
+  margin: 0 auto;
+}
 </style>
 
 <template>
-  <div class="main">
-    <Navbar :status="status"></Navbar>
-    <div class="row fragment">
+  <Navbar :status="status"></Navbar>
+
+  <div class="fragment layer">
+    <div class="row">
       <div class="col">
-        <Callout transition="fade" :status="status" v-for="(index, item) in set" :item="item" v-if="!(index&1)"></Callout>
+        <Callout transition="fadedown" :status="status" v-for="(index, item) in set" :item="item" v-if="!(index&1)"></Callout>
       </div>
       <div class="col">
-        <Callout transition="fade" :status="status" v-for="(index, item) in set" :item="item" v-if="index&1"></Callout>
+        <Callout transition="fadedown" :status="status" v-for="(index, item) in set" :item="item" v-if="index&1"></Callout>
       </div>
     </div>
     <button type="button" @click="more" v-show="hasMore">MORE</button>
-    <View :item="current" v-show="status.view"></View>
-    <Editor :item="current" v-show="status.edit"></Editor>
   </div>
+
+  <View transition="fade" :item="current" v-if="status.view"></View>
+  <Editor transition="fade" :item="current" v-show="status.edit"></Editor>
+  <File transition="fade" v-show="status.file"></File>
 </template>
 
 <script lang="babel">
@@ -43,6 +50,7 @@
   import Callout from './Callout.vue'
   import View from './View.vue'
   import Editor from './Editor.vue'
+  import File from './File.vue'
 
   export default {
     props: ['set', 'status', 'current', 'hasMore'],
@@ -57,6 +65,6 @@
       }
     },
 
-    components: { Navbar, Callout, View, Editor }
+    components: { Navbar, Callout, View, Editor, File }
   }
 </script>

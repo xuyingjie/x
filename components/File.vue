@@ -1,15 +1,15 @@
 <style>
-.file {
+.file > .card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-top: 80px;
+  padding: 1em;
 }
 .file button, .file .button {
   padding: 0;
   text-transform: none;
 }
-.file > label {
+.file label {
   margin-bottom: 20px;
 }
 .file input[type=file] {
@@ -26,16 +26,18 @@
 </style>
 
 <template>
-  <div class="row file">
-    <label class="button">
-      SELECT FILE
-      <input type="file" @change="fileChange($event)">
-      <i id="progress"></i>
-    </label>
-    <button type="button" v-for="item in list" @click="download(item)">
-      {{item.name}} - {{(item.size/1024).toFixed(2) + 'KB'}}
-      <i id="{{item.id}}"></i>
-    </button>
+  <div class="file layer">
+    <div class="row card">
+      <label class="button">
+        SELECT FILE
+        <input type="file" @change="fileChange($event)">
+        <i id="progress"></i>
+      </label>
+      <button type="button" v-for="item in list" @click="download(item)">
+        {{item.name}} - {{(item.size/1024).toFixed(2) + 'KB'}}
+        <i id="{{item.id}}"></i>
+      </button>
+    </div>
   </div>
 </template>
 

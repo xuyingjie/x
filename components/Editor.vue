@@ -1,8 +1,6 @@
 <style>
-  .editor .footer {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
+  .editor > .row {
+    padding: 1em;
   }
   .editor input[type=file] {
     display: none;
@@ -19,18 +17,20 @@
     flex-wrap: wrap;
     margin: 20px 0;
   }
-  .upload-box .button, .upload-box .thumbnail {
+  .upload-box > * {
+    height: 95px;
+    width: 95px;
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+    overflow: hidden;
+  }
+  .upload-box img {
+    max-width: 140%;
+    max-height: 140%;
+  }
+  .upload-box .button {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-
-    height: 90px;
-    width: 90px;
-    padding: 0;
-    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
-  }
-  .upload-box .button {
     will-change: box-shadow,transform;
     transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
   }
@@ -51,8 +51,8 @@
 </style>
 
 <template>
-  <div class="layer">
-    <div class="row editor">
+  <div class="editor layer">
+    <div class="row card">
 
       <div class="upload-box">
         <label class="button">
@@ -67,12 +67,7 @@
       </div>
 
       <textarea v-el:textarea v-model="item.text"></textarea>
-
-      <div class="footer">
-        <button type="button" @click="cancel">CANCEL</button>
-        <button type="button" @click="save">SAVE</button>
-      </div>
-
+      <button type="button" @click="save">SAVE</button>
     </div>
   </div>
 </template>
@@ -85,16 +80,15 @@
     props: ['item'],
 
     methods: {
-      cancel() {
-        this.$dispatch('cancel')
-      },
       save() {
-        this.item.lastChange = Date.now()
-        if (!this.item.id) {
-          this.item.id = Date.now()
-          this.$dispatch('save', this.item, true)
-        } else {
-          this.$dispatch('save', this.item, false)
+        if (this.item.img.length > 0 || this.item.text) {
+          this.item.lastChange = Date.now()
+          if (!this.item.id) {
+            this.item.id = Date.now()
+            this.$dispatch('save', this.item, true)
+          } else {
+            this.$dispatch('save', this.item, false)
+          }
         }
       },
 

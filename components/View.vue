@@ -1,15 +1,15 @@
 <style>
-  .layer section {
-    padding: 2.5rem;
+  .view .card {
+    min-height: 128px;
   }
-  .layer .content {
-    margin: 1rem 0;
+  .view .content {
+    padding: 1rem;
   }
 </style>
 
 <template>
-  <div class="layer" @click="cancel">
-    <section class="row" @click.stop>
+  <div class="view layer">
+    <section class="row card">
       <Picture :id="id" v-for="id in item.img"></Picture>
       <div class="content" v-if="text.length">
         {{{text}}}
@@ -27,12 +27,6 @@ export default {
   computed: {
     text() {
       return marked(this.item.text, { breaks: true, sanitize: true })
-    }
-  },
-
-  methods: {
-    cancel() {
-      this.$dispatch('cancel')
     }
   },
 
