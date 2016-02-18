@@ -13,6 +13,10 @@
 .card pre {
   margin: 0;
 }
+.card pre > code {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 .card nav {
   background-color: #f9f9f9;
 }

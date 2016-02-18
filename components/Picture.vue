@@ -3,7 +3,7 @@
 </template>
 
 <script lang="babel">
-import { dns } from '../tools'
+import { getSrc } from '../tools'
 
 export default {
   props: ['id'],
@@ -13,7 +13,7 @@ export default {
     }
   },
   compiled() {
-    dns(this.id).then(url => {
+    getSrc(this.id).then(url => {
       this.url = url
     })
   }

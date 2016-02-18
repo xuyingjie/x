@@ -1,8 +1,15 @@
 const bucket = 'whitehairpin'
-const url = `http://${bucket}.oss-cn-beijing.aliyuncs.com`
 const privacy = true
 
-export function dns(id) {
+const url = `http://${bucket}.oss-cn-beijing.aliyuncs.com`
+const postUrl = `http://${bucket}.oss-cn-beijing.aliyuncs.com`
+const cdn = `http://${bucket}.img-cn-beijing.aliyuncs.com`
+
+// const url = `http://7xr0k9.com1.z0.glb.clouddn.com` //qn
+// const postUrl = `http://upload.qiniu.com` //qn
+// const cdn = url //qn
+
+export function getSrc(id) {
   return new Promise(resolve => {
     if (privacy) {
       get(`img/${id}`, {file:true}).then(data => {
@@ -10,7 +17,8 @@ export function dns(id) {
         resolve(URL.createObjectURL(blob))
       })
     } else {
-      let url = `http://${bucket}.img-cn-beijing.aliyuncs.com/img/${id}@.jpg`
+      let url = `${cdn}/img/${id}@.jpg`
+      // let url = `${cdn}/img/${id}?imageMogr2/format/jpg` //qn
       resolve(url)
     }
   })
@@ -19,6 +27,7 @@ export function dns(id) {
 export function get(key, { file, progress, passwd } = {}) {
   return new Promise(resolve => {
     var responseType = (privacy || file || passwd) ? 'arraybuffer' : 'json'
+    // if (key.match(/(img|file)\//) === null) key = `${key}?v=${Date.now()}` //qn
     _get(key, { responseType, progress }).then(data => {
       if (privacy || passwd) {
         if (!passwd) passwd = JSON.parse(localStorage.user).passwd
@@ -75,7 +84,7 @@ function _upload(key, data, { progress } = {}) {
   return new Promise(resolve => {
     form(key, data).then(out => {
       var xhr = new XMLHttpRequest()
-      xhr.open('POST', url)
+      xhr.open('POST', postUrl)
 
       if (progress) xhr.upload.onprogress = (e) => {
         if (e.lengthComputable) progress.style.width = (e.loaded === e.total) ? 0 : e.loaded / e.total * 100 + '%'
@@ -90,17 +99,12 @@ function _upload(key, data, { progress } = {}) {
   })
 }
 
-// type: file.type?
-export function form(key, data) {
+function form(key, data) {
   const user = JSON.parse(localStorage.user)
   const AK = user.AK
   const SK = user.SK
 
-  var cache = 'no-cache'
-  if (key.match('img/') !== null) {
-    cache = 'public,max-age=8640000'
-  }
-
+  var cache = (key.match(/(img|file)\//) === null) ? 'no-cache' : 'public,max-age=8640000'
   const policyJson = {
     'expiration': (new Date(Date.now() + 3600000)).toJSON(),
     'conditions': [
@@ -111,18 +115,27 @@ export function form(key, data) {
       ['eq', '$key', key],
     ],
   }
+
+  // const policyJson = { //qn
+  //   'scope': bucket + ':' + key,
+  //   'deadline': 3600 + Math.floor(Date.now() / 1000)
+  // }
+
   const policy = btoa(JSON.stringify(policyJson))
 
   return new Promise(resolve => {
     b64HmacSHA1(SK, policy).then(signature => {
       const formData = new FormData()
       formData.append('key', key)
+
       formData.append('x-oss-object-acl', 'public-read')
       formData.append('Content-Type', 'application/octet-stream')
       formData.append('Cache-Control', cache)
       formData.append('OSSAccessKeyId', AK)
       formData.append('policy', policy)
       formData.append('signature', signature)
+
+      // formData.append('token', `${AK}:${signature.replace(/\+/g, '-').replace(/\//g, '_')}:${policy}`) //qn
 
       // 文件或文本内容，必须是表单中的最后一个域。
       formData.append('file', new Blob([data]))
@@ -132,10 +145,10 @@ export function form(key, data) {
 }
 
 
-export function arrayBufferToStr(buf) {
+function arrayBufferToStr(buf) {
   return String.fromCharCode.apply(null, new Uint16Array(buf))
 }
-export function strToArrayBuffer(str) {
+function strToArrayBuffer(str) {
   // return Uint16Array.from([...str], s => s.charCodeAt(0)).buffer
   // return new Uint16Array([...str].map(s => s.charCodeAt(0))).buffer
   return new TextEncoder('utf-16').encode(str)
@@ -173,7 +186,7 @@ function importKey(passwd) {
   })
 }
 
-export function encrypt(passwd, data) {
+function encrypt(passwd, data) {
   return new Promise((resolve, reject) => {
     importKey(passwd)
       .then(key => {
@@ -201,7 +214,7 @@ export function encrypt(passwd, data) {
   })
 }
 
-export function decrypt(passwd, data) {
+function decrypt(passwd, data) {
   return new Promise((resolve, reject) => {
     importKey(passwd)
       .then(key => {
@@ -223,7 +236,7 @@ export function decrypt(passwd, data) {
   })
 }
 
-export function b64HmacSHA1(key, str) {
+function b64HmacSHA1(key, str) {
   var keyBuf = new TextEncoder('utf-8').encode(key)
   var buf = new TextEncoder('utf-8').encode(str)
 

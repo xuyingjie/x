@@ -45,7 +45,7 @@
 </template>
 
 <script lang="babel">
-  import { get, decrypt, arrayBufferToStr } from '../tools'
+  import { get } from '../tools'
 
   export default {
     props: ['status'],

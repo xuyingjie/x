@@ -49,7 +49,7 @@ export default {
     }
   },
   compiled() {
-    get('file/list').then(data => {
+    get('filelist').then(data => {
       this.list = data.list
     })
   },
@@ -71,7 +71,7 @@ export default {
         var reader = new FileReader()
         reader.onload = () => {
           upload(`file/${id}`, reader.result, {file:true,progress}).then(() => {
-            upload(`file/list`, { list: l }).then(() => {
+            upload(`filelist`, { list: l }).then(() => {
               this.list = l
             })
           })
