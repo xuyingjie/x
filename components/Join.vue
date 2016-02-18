@@ -31,7 +31,7 @@
 </template>
 
 <script lang="babel">
-  import { upload, encrypt, strToArrayBuffer } from '../tools'
+  import { upload } from '../tools'
 
   export default {
     data() {
@@ -51,11 +51,8 @@
       join() {
         localStorage.user = JSON.stringify(this.user)
 
-        var buf = strToArrayBuffer(JSON.stringify(this.user))
-        encrypt(this.secret, buf).then(enc => {
-          upload(this.name, enc).then(() => {
-            console.log('success')
-          })
+        upload(this.name, this.user, {passwd:this.secret}).then(() => {
+          console.log('success')
         })
       },
     },

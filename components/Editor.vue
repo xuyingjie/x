@@ -61,8 +61,8 @@
           <i id="progress"></i>
         </label>
 
-        <div class="thumbnail" v-for="url in url">
-          <img :src="url">
+        <div class="thumbnail" v-for="id in item.img">
+          <Picture :id="id"></Picture>
         </div>
       </div>
 
@@ -78,16 +78,11 @@
 </template>
 
 <script lang="babel">
-  import { dns, upload } from '../tools'
+  import Picture from './Picture.vue'
+  import { upload } from '../tools'
 
   export default {
     props: ['item'],
-
-    computed: {
-      url() {
-        return this.item.img.map(dns)
-      }
-    },
 
     methods: {
       cancel() {
@@ -111,7 +106,7 @@
           var reader = new FileReader()
           reader.onload = () => {
             var id = `${Date.now()}${crypto.getRandomValues(new Uint16Array(1))[0]}`
-            upload(`img/${id}`, reader.result, {progress}).then(() => {
+            upload(`img/${id}`, reader.result, {file:true,progress}).then(() => {
               this.item.img.push(id)
             })
           }
@@ -122,7 +117,8 @@
           [...files].forEach(readAndUpload)
         }
       },
-    }
+    },
 
+    components: { Picture }
   }
 </script>

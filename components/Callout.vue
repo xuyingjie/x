@@ -23,7 +23,7 @@
 
 <template>
   <div class="card" @click="view(item.id)">
-    <img :src="src" v-for="src in img">
+    <Picture :id="this.item.img[0]" v-if="this.item.img[0]"></Picture>
     <pre v-if="text.length"><code>{{text}}</code></pre>
     <nav v-show="status.auth">
       <span class="item" v-show="false">{{new Date(item.lastChange).toDateString()}}</span>
@@ -34,23 +34,14 @@
 
 
 <script lang="babel">
-  import { dns } from '../tools'
+  import Picture from './Picture.vue'
 
   export default {
     props: ['item', 'status'],
-
-    data() {
-      return {
-        img: [],
-        text: ''
+    computed: {
+      text() {
+        return this.item.text.split(/\n/).slice(0,9).join('\n')
       }
-    },
-
-    created() {
-      var id = this.item.img[0]
-      if (id) this.img.push(dns(id))
-
-      this.text = this.item.text.split(/\n/).slice(0,9).join('\n')
     },
 
     methods: {
@@ -60,6 +51,8 @@
       edit(id) {
         this.$dispatch('edit', id)
       }
-    }
+    },
+
+    components: { Picture }
   }
 </script>

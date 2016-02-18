@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './components/App.vue'
 import Join from './components/Join.vue'
 import File from './components/File.vue'
-import { get, upload, encStr, decStr } from './tools'
+import { get, upload } from './tools'
 
 // Vue.config.debug = true
 new Vue({
@@ -56,7 +56,7 @@ new Vue({
       }
     },
     cache() {
-      get('list', {responseType: 'json'}).then(out => {
+      get('list').then(out => {
         this.list = out.list
         this.set = []
         this.index = 0
@@ -65,12 +65,10 @@ new Vue({
     },
     load(n) {
       this.list.slice(this.index, this.index + n).forEach(id => {
-        get(`set/${id}`).then(data => {
-          decStr(data).then(item => {
-            // this.set.$set(i, out)  // error
-            this.set.push(item)  // order?
-            this.index += 1
-          })
+        get(`set/${id}`).then(item => {
+          // this.set.$set(i, out)  // error
+          this.set.push(item)  // order?
+          this.index += 1
         })
       })
     }
@@ -120,19 +118,17 @@ new Vue({
         s = s.map(el => el.id === item.id ? item : el)
       }
 
-      encStr(item).then(enc => {
-        upload(`set/${item.id}`, enc).then(() => {
-          if (newItem) {
-            upload(`list`, JSON.stringify({ list: l })).then(() => {
-              this.list = l
-              this.set = s
-              this.status.edit = false
-            })
-          } else {
+      upload(`set/${item.id}`, item).then(() => {
+        if (newItem) {
+          upload(`list`, { list: l }).then(() => {
+            this.list = l
             this.set = s
             this.status.edit = false
-          }
-        })
+          })
+        } else {
+          this.set = s
+          this.status.edit = false
+        }
       })
     },
     more() {

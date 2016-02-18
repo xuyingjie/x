@@ -10,7 +10,7 @@
 <template>
   <div class="layer" @click="cancel">
     <section class="row" @click.stop>
-      <img :src="src" v-for="src in img">
+      <Picture :id="id" v-for="id in item.img"></Picture>
       <div class="content" v-if="text.length">
         {{{text}}}
       </div>
@@ -19,16 +19,12 @@
 </template>
 
 <script lang="babel">
-
+import Picture from './Picture.vue'
 import marked from 'marked'
-import { dns } from '../tools'
 
 export default {
   props: ['item'],
   computed: {
-    img() {
-      return this.item.img.map(dns)
-    },
     text() {
       return marked(this.item.text, { breaks: true, sanitize: true })
     }
@@ -38,7 +34,8 @@ export default {
     cancel() {
       this.$dispatch('cancel')
     }
-  }
+  },
 
+  components: { Picture }
 }
 </script>

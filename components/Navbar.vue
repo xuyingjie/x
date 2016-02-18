@@ -62,11 +62,9 @@
         this.$dispatch('add')
       },
       login() {
-        get(this.name).then(data => {
-          decrypt(this.passwd, data).then(out => {
-            localStorage.user = arrayBufferToStr(out)
-            this.$dispatch('login')
-          })
+        get(this.name, {passwd:this.passwd}).then(data => {
+          localStorage.user = JSON.stringify(data)
+          this.$dispatch('login')
         })
       },
       logout() {

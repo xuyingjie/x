@@ -40,27 +40,18 @@
 </template>
 
 <script lang="babel">
-import { get, upload, encrypt, strToArrayBuffer, decrypt, arrayBufferToStr } from '../tools'
+import { get, upload } from '../tools'
 
 export default {
-  props: ['status'],
   data() {
     return {
-      list: [],
-      passwd: ''
+      list: []
     }
   },
   compiled() {
-    if (!this.status.auth) {
-      location.assign('#')
-    } else {
-      this.passwd = JSON.parse(localStorage.user).passwd
-      get('file/list').then(data => {
-        decrypt(this.passwd, data).then(out => {
-          this.list = JSON.parse(arrayBufferToStr(out)).list
-        })
-      })
-    }
+    get('file/list').then(data => {
+      this.list = data.list
+    })
   },
 
   methods: {
@@ -79,45 +70,38 @@ export default {
 
         var reader = new FileReader()
         reader.onload = () => {
-          encrypt(this.passwd, reader.result).then(data => {
-            upload(`file/${id}`, data, {progress}).then(() => {
-              encrypt(this.passwd, strToArrayBuffer(JSON.stringify({ list: l }))).then(data => {
-                upload(`file/list`, data).then(() => {
-                  this.list = l
-                })
-              })
+          upload(`file/${id}`, reader.result, {file:true,progress}).then(() => {
+            upload(`file/list`, { list: l }).then(() => {
+              this.list = l
             })
           })
-
         }
         reader.readAsArrayBuffer(file)
       }
     },
     download(file) {
       var progress = document.getElementById(file.id)
-      get(`file/${file.id}`, {progress}).then(data => {
-        decrypt(this.passwd, data).then(data => {
-          var blob = new Blob([data], {
-            'type': file.type,
-          })
-          var objecturl = URL.createObjectURL(blob)
-
-          // 生成下载
-          var anchor = document.createElement('a')
-          anchor.href = objecturl
-
-          // 新标签页打开
-          // anchor.target = '_blank'
-
-          // 直接下载
-          anchor.download = file.name
-
-          document.body.appendChild(anchor)
-          var evt = document.createEvent('MouseEvents')
-          evt.initEvent('click', true, true)
-          anchor.dispatchEvent(evt)
-          document.body.removeChild(anchor)
+      get(`file/${file.id}`, {file:true,progress}).then(data => {
+        var blob = new Blob([data], {
+          'type': file.type,
         })
+        var objecturl = URL.createObjectURL(blob)
+
+        // 生成下载
+        var anchor = document.createElement('a')
+        anchor.href = objecturl
+
+        // 新标签页打开
+        // anchor.target = '_blank'
+
+        // 直接下载
+        anchor.download = file.name
+
+        document.body.appendChild(anchor)
+        var evt = document.createEvent('MouseEvents')
+        evt.initEvent('click', true, true)
+        anchor.dispatchEvent(evt)
+        document.body.removeChild(anchor)
       })
     }
   }

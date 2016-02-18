@@ -1,8 +1,58 @@
 const bucket = 'whitehairpin'
 const url = `http://${bucket}.oss-cn-beijing.aliyuncs.com`
-export const dns = (id) => `http://${bucket}.img-cn-beijing.aliyuncs.com/img/${id}@.webp`
+const privacy = true
 
-export function get(key, { responseType, progress } = {}) {
+export function dns(id) {
+  return new Promise(resolve => {
+    if (privacy) {
+      get(`img/${id}`, {file:true}).then(data => {
+        var blob = new Blob([data])
+        resolve(URL.createObjectURL(blob))
+      })
+    } else {
+      let url = `http://${bucket}.img-cn-beijing.aliyuncs.com/img/${id}@.jpg`
+      resolve(url)
+    }
+  })
+}
+
+export function get(key, { file, progress, passwd } = {}) {
+  return new Promise(resolve => {
+    var responseType = (privacy || file || passwd) ? 'arraybuffer' : 'json'
+    _get(key, { responseType, progress }).then(data => {
+      if (privacy || passwd) {
+        if (!passwd) passwd = JSON.parse(localStorage.user).passwd
+        decrypt(passwd, data).then(out => {
+          if (!file) out = JSON.parse(arrayBufferToStr(out))
+          resolve(out)
+        })
+      } else {
+        resolve(data)
+      }
+    })
+  })
+}
+
+export function upload(key, data, { file, progress, passwd } = {}) {
+  return new Promise(resolve => {
+    if (!file) data = JSON.stringify(data)
+    if (privacy || passwd) {
+      if (!passwd) passwd = JSON.parse(localStorage.user).passwd
+      if (!file) data = strToArrayBuffer(data)
+      encrypt(passwd, data).then(out => {
+        _upload(key, out, { progress }).then(() => {
+          resolve()
+        })
+      })
+    } else {
+      _upload(key, data, { progress }).then(() => {
+        resolve()
+      })
+    }
+  })
+}
+
+function _get(key, { responseType, progress } = {}) {
   return new Promise(resolve => {
 
     var xhr = new XMLHttpRequest()
@@ -21,7 +71,7 @@ export function get(key, { responseType, progress } = {}) {
   })
 }
 
-export function upload(key, data, { progress } = {}) {
+function _upload(key, data, { progress } = {}) {
   return new Promise(resolve => {
     form(key, data).then(out => {
       var xhr = new XMLHttpRequest()
@@ -94,44 +144,6 @@ export function strToArrayBuffer(str) {
 //
 // WebCryptoAPI
 //
-export function encStr(item) {
-  return new Promise(resolve => {
-    var user = JSON.parse(localStorage.user)
-    var buf = strToArrayBuffer(item.text)
-    encrypt(user.passwd, buf).then(data => {
-      var x = {
-        id: item.id,
-        img: item.img,
-        lastChange: item.lastChange
-      }
-      var b = strToArrayBuffer(JSON.stringify(x))
-      var c = set(new Uint16Array([b.byteLength/2]).buffer, b)
-      var out = set(c, data)
-      resolve(out)
-    })
-  })
-}
-
-export function decStr(data) {
-  return new Promise(resolve => {
-    var x = new Uint16Array(data)
-    var len = x.subarray(0, 1)[0]
-    var str = String.fromCharCode.apply(null, x.subarray(1, len + 1))
-    var item = JSON.parse(str)
-    if (localStorage.user) {
-      let user = JSON.parse(localStorage.user)
-      let buf = data.slice((len + 1) * 2)
-      decrypt(user.passwd, buf).then(out => {
-        item.text = arrayBufferToStr(out)
-        resolve(item)
-      })
-    } else {
-      item.text = ''
-      resolve(item)
-    }
-  })
-}
-
 // concat arrayBuffer
 function set(a, b) {
   var out = new Uint8Array(a.byteLength + b.byteLength)
