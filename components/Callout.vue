@@ -24,7 +24,7 @@
 
 <template>
   <div class="callout card" @click="view(item.id)">
-    <Picture :id="this.item.img[0]" v-if="this.item.img[0]"></Picture>
+    <Picture :id="src" v-if="src"></Picture>
     <pre v-if="text.length"><code>{{text}}</code></pre>
     <nav v-show="auth">
       <span class="item" v-show="false">{{new Date(item.lastChange).toDateString()}}</span>
@@ -40,6 +40,9 @@
   export default {
     props: ['item', 'auth'],
     computed: {
+      src() {
+        return [...this.item.img].sort()[0]
+      },
       text() {
         return this.item.text.split(/\n/).slice(0,9).join('\n')
       }

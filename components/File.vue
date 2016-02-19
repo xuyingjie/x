@@ -61,7 +61,7 @@ export default {
       var file = event.target.files[0]
       if (file) {
         var progress = document.getElementById('progress')
-        var id = `${Date.now()}${crypto.getRandomValues(new Uint16Array(1))[0]}`
+        var id = Date.now()
         var item = {
           id,
           name: file.name,

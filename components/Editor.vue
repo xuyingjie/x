@@ -61,7 +61,7 @@
           <i id="progress"></i>
         </label>
 
-        <div class="thumbnail" v-for="id in item.img">
+        <div class="thumbnail" v-for="id in item.img | orderBy true">
           <Picture :id="id"></Picture>
         </div>
       </div>
@@ -78,19 +78,23 @@
 
   export default {
     props: ['set'],
-    computed: {
-      item() {
-        var id = Number(location.hash.split('/')[2])
-        if (id) {
-          return Object.assign({}, this.set.filter(el => el.id === id)[0])
-        } else {
-          return {
-            id: 0,
-            img: [],
-            text: '',
-            lastChange: 0
-          }
+    data() {
+      return {
+        item: {
+          id: 0,
+          img: [],
+          text: '',
+          lastChange: 0
         }
+      }
+    },
+    created() {
+      var id = Number(location.hash.split('/')[2])
+      if (id) {
+        this.item = Object.assign({}, this.set.filter(el => el.id === id)[0])
+        this.$watch('set', (val) => {
+          this.item = Object.assign({}, val.filter(el => el.id === id)[0])
+        })
       }
     },
 
@@ -111,10 +115,10 @@
         var files = event.target.files
         var progress = document.getElementById('progress')
 
-        var readAndUpload = (file) => {
+        var readAndUpload = (file, index) => {
+          var id = Date.now() * 1000 + index
           var reader = new FileReader()
           reader.onload = () => {
-            var id = `${Date.now()}${crypto.getRandomValues(new Uint16Array(1))[0]}`
             upload(`img/${id}`, reader.result, {file:true,progress}).then(() => {
               this.item.img.push(id)
             })

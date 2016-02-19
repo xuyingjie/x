@@ -10,7 +10,7 @@
 <template>
   <div class="view layer">
     <section class="row card">
-      <Picture :id="id" v-for="id in item.img"></Picture>
+      <Picture :id="id" v-for="id in item.img | orderBy true"></Picture>
       <div class="content" v-if="text.length">
         {{{text}}}
       </div>
