@@ -23,10 +23,14 @@ import Picture from './Picture.vue'
 import marked from 'marked'
 
 export default {
-  props: ['item'],
+  props: ['set'],
   computed: {
+    item() {
+      var id = Number(location.hash.split('/')[2])
+      return Object.assign({}, this.set.filter(el => el.id === id)[0])
+    },
     text() {
-      return marked(this.item.text, { breaks: true, sanitize: true })
+      return this.item.text ? marked(this.item.text, { breaks: true, sanitize: true }) : ''
     }
   },
 

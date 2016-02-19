@@ -77,7 +77,22 @@
   import { upload } from '../tools'
 
   export default {
-    props: ['item'],
+    props: ['set'],
+    computed: {
+      item() {
+        var id = Number(location.hash.split('/')[2])
+        if (id) {
+          return Object.assign({}, this.set.filter(el => el.id === id)[0])
+        } else {
+          return {
+            id: 0,
+            img: [],
+            text: '',
+            lastChange: 0
+          }
+        }
+      }
+    },
 
     methods: {
       save() {

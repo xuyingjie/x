@@ -17,9 +17,9 @@
   <div class="bar">
     <nav class="row">
 
-      <h1 style="cursor:pointer;" @click="back" v-if="status.view||status.edit||status.file">BACK</h1>
+      <h1 style="cursor:pointer;" @click="back" v-if="page">BACK</h1>
       <template v-else>
-        <template v-if="status.auth">
+        <template v-if="auth">
           <h1 class="item">TITLE</h1>
           <button type="button" @click="add">ADD</button>
           <button type="button" @click="file">FILE</button>
@@ -41,7 +41,7 @@
   import { get } from '../tools'
 
   export default {
-    props: ['status'],
+    props: ['auth', 'page'],
 
     data() {
       return {
@@ -52,7 +52,7 @@
 
     methods: {
       add() {
-        this.$dispatch('add')
+        location.assign(`#/edit`)
       },
       login() {
         get(this.name, {passwd:this.passwd}).then(data => {
@@ -65,10 +65,10 @@
         this.$dispatch('logout')
       },
       back() {
-        this.$dispatch('cancel')
+        history.back()
       },
       file() {
-        this.$dispatch('file')
+        location.assign(`#/file`)
       },
     }
   }

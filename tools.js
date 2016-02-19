@@ -1,5 +1,5 @@
 const bucket = 'whitehairpin'
-const privacy = true
+export const privacy = true
 
 const url = `http://${bucket}.oss-cn-beijing.aliyuncs.com`
 const postUrl = `http://${bucket}.oss-cn-beijing.aliyuncs.com`

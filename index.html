@@ -5,8 +5,8 @@
     <title>x</title>
     <link rel="stylesheet" href="base.css">
   </head>
-  <body :style="{overflow: status.edit||status.view?'hidden':'auto'}">
-    <component :is="currentView" :set="set" :status="status" :current="current" :has-more="hasMore"></component>
+  <body>
+    <component :is="currentView" :set="set" :auth="auth" :page="page" :has-more="hasMore"></component>
 
     <script src="build.js" charset="utf-8"></script>
   </body>

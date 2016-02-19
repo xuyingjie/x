@@ -27,7 +27,7 @@
   <div class="callout card" @click="view(item.id)">
     <Picture :id="this.item.img[0]" v-if="this.item.img[0]"></Picture>
     <pre v-if="text.length"><code>{{text}}</code></pre>
-    <nav v-show="status.auth">
+    <nav v-show="auth">
       <span class="item" v-show="false">{{new Date(item.lastChange).toDateString()}}</span>
       <button type="button" @click.stop="edit(item.id)">EDIT</button>
     </nav>
@@ -39,7 +39,7 @@
   import Picture from './Picture.vue'
 
   export default {
-    props: ['item', 'status'],
+    props: ['item', 'auth'],
     computed: {
       text() {
         return this.item.text.split(/\n/).slice(0,9).join('\n')
@@ -48,10 +48,10 @@
 
     methods: {
       view(id) {
-        this.$dispatch('view', id)
+        location.assign(`#/view/${id}`)
       },
       edit(id) {
-        this.$dispatch('edit', id)
+        location.assign(`#/edit/${id}`)
       }
     },
 

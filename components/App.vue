@@ -26,23 +26,23 @@
 </style>
 
 <template>
-  <Navbar :status="status"></Navbar>
+  <Navbar :auth="auth" :page="page"></Navbar>
 
   <div class="fragment layer">
     <div class="row">
       <div class="col">
-        <Callout transition="fadedown" :status="status" v-for="(index, item) in set" :item="item" v-if="!(index&1)"></Callout>
+        <Callout transition="fadedown" :auth="auth" v-for="(index, item) in set" :item="item" v-if="!(index&1)"></Callout>
       </div>
       <div class="col">
-        <Callout transition="fadedown" :status="status" v-for="(index, item) in set" :item="item" v-if="index&1"></Callout>
+        <Callout transition="fadedown" :auth="auth" v-for="(index, item) in set" :item="item" v-if="index&1"></Callout>
       </div>
     </div>
     <button type="button" @click="more" v-show="hasMore">MORE</button>
   </div>
 
-  <View transition="fade" :item="current" v-if="status.view"></View>
-  <Editor transition="fade" :item="current" v-show="status.edit"></Editor>
-  <File transition="fade" v-show="status.file"></File>
+  <View transition="fade" :set="set" v-if="page=='view'"></View>
+  <Editor transition="fade" :set="set" v-if="page=='edit'"></Editor>
+  <File transition="fade" v-if="page=='file'"></File>
 </template>
 
 <script lang="babel">
@@ -53,7 +53,7 @@
   import File from './File.vue'
 
   export default {
-    props: ['set', 'status', 'current', 'hasMore'],
+    props: ['set', 'auth', 'page', 'hasMore'],
 
     compiled() {
       this.$dispatch('init')

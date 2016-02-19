@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './components/App.vue'
 import Join from './components/Join.vue'
-import { get, upload } from './tools'
+import { get, upload, privacy } from './tools'
 
 // Vue.config.debug = true
 new Vue({
@@ -11,12 +11,8 @@ new Vue({
     set: [],
     index: 0,
 
-    status: {
-      auth: false,
-      edit: false,
-      view: false,
-      file: false,
-    },
+    auth: false,
+    page: '',
 
     current: {
       id: 0,
@@ -39,7 +35,7 @@ new Vue({
     window.onhashchange = this.hashChange
 
     if (localStorage.user) {
-      this.status.auth = true
+      this.auth = true
     }
   },
 
@@ -47,22 +43,33 @@ new Vue({
     // router
     hashChange() {
       var hash = location.hash.split('/')
-      if (hash[1] === 'join') {
-        this.currentView = 'Join'
-      } else {
-        this.currentView = 'App'
+      switch (hash[1]) {
+        case 'join':
+          this.currentView = 'Join'
+          break
+        case 'view':
+          this.page = 'view'
+          break
+        case 'edit':
+          this.page = 'edit'
+          break
+        case 'file':
+          this.page = 'file'
+          break
+        default:
+          this.currentView = 'App'
+          this.page = ''
       }
     },
     cache() {
       get('list').then(out => {
         this.list = out.list
-        this.set = []
-        this.index = 0
-        this.load(10)
+        this.load()
       })
     },
-    load(n) {
-      this.list.slice(this.index, this.index + n).forEach(id => {
+    load() {
+      var num = 10
+      this.list.slice(this.index, this.index + num).forEach(id => {
         get(`set/${id}`).then(item => {
           // this.set.$set(i, out)  // error
           this.set.push(item)  // order?
@@ -74,41 +81,20 @@ new Vue({
 
   events: {
     init() {
-      this.cache()
+      if ((privacy && this.auth) || !privacy) {
+        this.cache()
+      }
+    },
+    more() {
+      this.load()
     },
     login() {
-      this.cache()
-      this.status.auth = true
+      this.auth = true
+      if (privacy) this.cache()
     },
     logout() {
-      this.set = []
-      this.index = 0
-      this.status.auth = false
-    },
-    cancel() {
-      this.status.edit = false
-      this.status.view = false
-      this.status.file = false
-    },
-    add() {
-      this.current = {
-        id: 0,
-        img: [],
-        text: '',
-        lastChange: 0
-      }
-      this.status.edit = true
-    },
-    edit(id) {
-      this.current = Object.assign({}, this.set.filter(el => el.id === id)[0])
-      this.status.edit = true
-    },
-    view(id) {
-      this.current = Object.assign({}, this.set.filter(el => el.id === id)[0])
-      this.status.view = true
-    },
-    file() {
-      this.status.file = true
+      this.auth = false
+      if (privacy) this.$data = {}
     },
     save(item, newItem) {
       var l = [...this.list]
@@ -124,19 +110,16 @@ new Vue({
         if (newItem) {
           upload(`list`, { list: l }).then(() => {
             this.list = l
+            this.index += 1
             this.set = s
-            this.status.edit = false
+            location.replace('#/')
           })
         } else {
           this.set = s
-          this.status.edit = false
+          location.replace('#/')
         }
       })
     },
-    more() {
-      this.load(10)
-    },
-
   },
 
   components: { App, Join }
