@@ -1,6 +1,5 @@
 <style>
 .callout {
-  width: 530px;
   cursor: pointer;
 }
 .callout:hover {
@@ -19,7 +18,7 @@
   background-color: #f9f9f9;
 }
 .callout nav button {
-  font-size: 18px;
+  font-size: 16px;
 }
 </style>
 
