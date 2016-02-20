@@ -5,6 +5,11 @@
   .view .content {
     padding: 1rem;
   }
+  @media screen and (max-width: 39.9375em) {
+    .view .content {
+      padding: 0.5rem;
+    }
+  }
 </style>
 
 <template>

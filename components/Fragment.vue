@@ -4,26 +4,38 @@
     justify-content: space-between;
   }
   .fragment .col {
-    display: flex;
-    flex-direction: column;
-    max-width: 530px;
-    width: 100%;
-    overflow: hidden; /*!!!*/
+    width: 50%;
   }
   .fragment .col:first-child {
-    margin-right: 1rem;
+    padding-right: 10px;
+  }
+  .fragment .col:last-child {
+    padding-left: 10px;
   }
   .fragment > button {
     display: block;
     margin: 0 auto;
   }
-  .fragment.medium .callout {
-    margin-bottom: 1rem;
+  @media screen and (min-width: 40em) and (max-width: 67.5em) {
+    .fragment .col:first-child {
+      padding-right: 0.5rem;
+    }
+    .fragment .col:last-child {
+      padding-left: 0.5rem;
+    }
+    .fragment .callout {
+      margin-bottom: 1rem;
+    }
+  }
+  @media screen and (max-width: 39.9375em) {
+    .fragment .callout {
+      margin-bottom: 10px;
+    }
   }
 </style>
 
 <template>
-  <div class="fragment layer" :class="{medium:medium}">
+  <div class="fragment layer">
     <div class="row" v-if="small">
       <Callout transition="fadedown" :auth="auth" v-for="item in set" :item="item"></Callout>
     </div>
@@ -47,7 +59,6 @@
     props: ['set', 'auth', 'hasMore'],
     data() {
       return {
-        medium: false,
         small: false,
       }
     },
@@ -59,7 +70,6 @@
 
     methods: {
       resize() {
-        this.medium = (window.innerWidth < 1080) ? true : false
         this.small = (window.innerWidth < 800) ? true : false
       },
       more() {

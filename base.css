@@ -252,7 +252,7 @@ button, .button {
   line-height: 36px;
 
   color: #676767;
-  font-size: 20px;
+  font-size: 18px;
   text-transform: uppercase;
 }
 
@@ -263,9 +263,10 @@ input[type=text], input[type=password], textarea {
   margin-right: 10px;
   height: 48px;
   width: 250px;
-  background-color: #E6E6E6;
+  background-color: #e5e5e5;
   font-size: 18px;
   padding: 0 1rem;
+  overflow: hidden; /*!!!*/
 }
 
 .bar {
@@ -303,6 +304,39 @@ input[type=text], input[type=password], textarea {
 }
 .layer > .row {
   margin-top: 1rem;
+}
+
+@media screen and (max-width: 39.9375em) {
+  button, .button {
+    font-size: 1rem;
+  }
+  pre > code {
+    padding: 0.5rem;
+  }
+  .bar, .layer {
+    padding: 0 5px;
+  }
+  .bar {
+    height: 48px;
+    line-height: 48px;
+  }
+  .bar input {
+    font-size: 1rem;
+    height: 36px;
+    margin-right: 5px;
+  }
+  .bar button {
+    padding: 0;
+  }
+  .bar h1 {
+    font-size: 20px;
+  }
+  .layer {
+    top: 48px;
+  }
+  .layer > .row {
+    margin-top: 10px;
+  }
 }
 
 /*https://github.com/daneden/animate.css*/

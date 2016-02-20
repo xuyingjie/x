@@ -3,14 +3,21 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 1em;
+  padding: 1rem;
+}
+@media screen and (max-width: 39.9375em) {
+  .file > .card {
+    padding: 0.5rem;
+  }
 }
 .file button, .file .button {
   padding: 0;
   text-transform: none;
+  max-width: 100%;
+  text-overflow: ellipsis;
 }
 .file label {
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 .file input[type=file] {
   display: none;

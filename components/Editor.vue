@@ -1,6 +1,8 @@
 <style>
   .editor > .row {
-    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
   }
   .editor input[type=file] {
     display: none;
@@ -9,17 +11,25 @@
     width: 100%;
     height: 540px;
     padding: 12px;
+    margin: 0;
     border-bottom: none;
-    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+    border-radius: 0;
+  }
+  @media screen and (max-width: 39.9375em) {
+    .editor textarea {
+      padding: 0.5rem;
+      height: 320px;
+    }
   }
   .upload-box {
     display: flex;
     flex-wrap: wrap;
-    margin: 20px 0;
+    margin-bottom: 1rem;
+    width: 100%;
   }
   .upload-box > * {
-    height: 95px;
-    width: 95px;
+    height: 90px;
+    width: 90px;
     box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
     overflow: hidden;
   }
@@ -66,7 +76,7 @@
         </div>
       </div>
 
-      <textarea v-el:textarea v-model="item.text"></textarea>
+      <textarea placeholder="typing..." v-model="item.text"></textarea>
       <button type="button" @click="save">SAVE</button>
     </div>
   </div>
