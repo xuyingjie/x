@@ -14,6 +14,9 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.callout pre:first-child > code {
+  min-height: 90px;
+}
 .callout nav {
   background-color: #f9f9f9;
 }

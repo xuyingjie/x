@@ -266,7 +266,6 @@ input[type=text], input[type=password], textarea {
   background-color: #e5e5e5;
   font-size: 18px;
   padding: 0 1rem;
-  overflow: hidden; /*!!!*/
 }
 
 .bar {

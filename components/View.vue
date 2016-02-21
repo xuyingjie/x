@@ -4,6 +4,10 @@
   }
   .view .content {
     padding: 1rem;
+    word-wrap: break-word;
+  }
+  .view pre > code {
+    word-wrap: normal;
   }
   @media screen and (max-width: 39.9375em) {
     .view .content {

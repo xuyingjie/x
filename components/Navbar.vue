@@ -7,6 +7,9 @@
     display: flex;
     align-items: center;
   }
+  .bar form input {
+    overflow: hidden; /*!!!*/
+  }
   .bar h1 {
     margin: 0;
     color: #676767;

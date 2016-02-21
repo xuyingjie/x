@@ -14,6 +14,8 @@ module.exports = {
         test: /\.vue$/, // a regex for matching all files that end in `.vue`
         loader: 'vue'   // loader to use for matched files
       },
+      // https://babeljs.io/docs/setup/#webpack
+      // https://github.com/babel/babel-loader  //Webpack plugin for Babel
       {
         // use babel-loader for *.js files
         test: /\.js$/,
@@ -26,8 +28,7 @@ module.exports = {
   },
 
   babel: {
-    // enable stage 0 babel transforms.
-    presets: ['es2015', 'stage-0'],
-    plugins: ['transform-runtime']
+    presets: ['es2015'],
+    // plugins: ['transform-runtime']
   }
 }
