@@ -10,6 +10,7 @@ new Vue({
     list: [],
     set: [],
     index: 0,
+    keyword: '',
 
     auth: false,
     page: '',
@@ -25,6 +26,9 @@ new Vue({
   },
 
   computed: {
+    filterSet() {
+      return this.set.filter(el => (el.text.search(this.keyword) !== -1))
+    },
     hasMore() {
       return this.list.length > this.index
     }
@@ -73,9 +77,9 @@ new Vue({
         get(`set/${id}`).then(item => {
           // this.set.$set(i, out)  // error
           this.set.push(item)  // order?
-          this.index += 1
         })
       })
+      this.index += num
     }
   },
 
@@ -119,6 +123,12 @@ new Vue({
           location.replace('#/')
         }
       })
+    },
+    search(keyword) {
+      this.keyword = keyword
+      while (this.hasMore) {
+        this.load()
+      }
     },
   },
 

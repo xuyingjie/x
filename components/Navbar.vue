@@ -7,11 +7,11 @@
     display: flex;
     align-items: center;
   }
-  .bar form input {
+  .bar nav input {
     overflow: hidden; /*!!!*/
   }
   .bar h1 {
-    margin: 0;
+    margin: 0 10px 0 0;
     color: #676767;
   }
 </style>
@@ -24,6 +24,7 @@
       <template v-else>
         <template v-if="auth">
           <h1 class="item">TITLE</h1>
+          <input type="text" @keyup="search($event)">
           <button type="button" @click="add">ADD</button>
           <button type="button" @click="file">FILE</button>
           <button type="button" @click="logout">LOGOUT</button>
@@ -73,6 +74,9 @@
       file() {
         location.assign(`#/file`)
       },
+      search(e) {
+        this.$dispatch('search', e.target.value)
+      }
     }
   }
 </script>
