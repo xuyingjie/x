@@ -1,3 +1,8 @@
+import AES from 'crypto-js/aes'
+import encUtf8 from 'crypto-js/enc-utf8'
+import encBase64 from 'crypto-js/enc-base64'
+import HmacSHA1 from 'crypto-js/hmac-sha1'
+
 const bucket = 'whitehairpin'
 export const privacy = true
 
@@ -26,26 +31,31 @@ export function getSrc(id) {
 
 export function get(key, { file, progress, passwd } = {}) {
   return new Promise(resolve => {
-    var responseType = (privacy || file || passwd) ? 'arraybuffer' : 'json'
     // if (key.match(/(img|file)\//) === null) key = `${key}?v=${Date.now()}` //qn
-    _get(key, { responseType, progress }).then(data => {
-      if (privacy || passwd) {
+    if (privacy) {
+      _get(key, { progress }).then(data => {
         if (!passwd) passwd = JSON.parse(localStorage.user).passwd
         decrypt(passwd, data).then(out => {
           if (!file) out = JSON.parse(arrayBufferToStr(out))
           resolve(out)
         })
-      } else {
+      })
+    } else {
+      let responseType = 'json'
+      if (file) responseType = 'arraybuffer'
+      if (passwd) responseType = 'text'
+      _get(key, { responseType, progress }).then(data => {
+        if (passwd) data = JSON.parse(AES.decrypt(data, passwd).toString(encUtf8))
         resolve(data)
-      }
-    })
+      })
+    }
   })
 }
 
 export function upload(key, data, { file, progress, passwd } = {}) {
   return new Promise(resolve => {
     if (!file) data = JSON.stringify(data)
-    if (privacy || passwd) {
+    if (privacy) {
       if (!passwd) passwd = JSON.parse(localStorage.user).passwd
       if (!file) data = strToArrayBuffer(data)
       encrypt(passwd, data).then(out => {
@@ -54,6 +64,7 @@ export function upload(key, data, { file, progress, passwd } = {}) {
         })
       })
     } else {
+      if (passwd) data = AES.encrypt(data, passwd).toString()
       _upload(key, data, { progress }).then(() => {
         resolve()
       })
@@ -73,7 +84,9 @@ function _get(key, { responseType, progress } = {}) {
     }
 
     xhr.onload = () => {
-      resolve(xhr.response)
+      if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+        resolve(xhr.response)
+      }
     }
 
     xhr.send(null)
@@ -91,7 +104,9 @@ function _upload(key, data, { progress } = {}) {
       }
 
       xhr.onload = () => {
-        resolve(xhr.response)
+        if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+          resolve(xhr.response)
+        }
       }
 
       xhr.send(out)
@@ -238,15 +253,20 @@ function decrypt(passwd, data) {
 }
 
 function b64HmacSHA1(key, str) {
-  var keyBuf = new TextEncoder('utf-8').encode(key)
-  var buf = new TextEncoder('utf-8').encode(str)
-
   return new Promise(resolve => {
-    var hmacSha1 = {name: 'hmac', hash: {name: 'sha-1'}}
-    crypto.subtle.importKey('raw', keyBuf, hmacSha1, true, ['sign', 'verify']).then(out => {
-      crypto.subtle.sign(hmacSha1, out, buf).then(result => {
-        resolve(btoa(String.fromCharCode.apply(null, new Uint8Array(result))))
+    if (privacy) {
+      let keyBuf = new TextEncoder('utf-8').encode(key)
+      let buf = new TextEncoder('utf-8').encode(str)
+      let hmacSha1 = {name: 'hmac', hash: {name: 'sha-1'}}
+      crypto.subtle.importKey('raw', keyBuf, hmacSha1, true, ['sign', 'verify']).then(out => {
+        crypto.subtle.sign(hmacSha1, out, buf).then(result => {
+          resolve(btoa(String.fromCharCode.apply(null, new Uint8Array(result))))
+        })
       })
-    })
+    } else {
+      let hash = HmacSHA1(str, key)
+      let hmac = encBase64.stringify(hash)
+      resolve(hmac)
+    }
   })
 }

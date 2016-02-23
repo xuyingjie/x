@@ -27,7 +27,8 @@ new Vue({
 
   computed: {
     filterSet() {
-      return this.set.filter(el => (el.text.search(this.keyword) !== -1))
+      var re = new RegExp(this.keyword, 'i')
+      return this.set.filter(el => (el.text.search(re) !== -1))
     },
     hasMore() {
       return this.list.length > this.index
