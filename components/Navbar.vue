@@ -7,6 +7,9 @@
     display: flex;
     align-items: center;
   }
+  .bar input[type=password], .bar button[type=submit] {
+    opacity: 0.42;
+  }
   .bar nav input {
     overflow: hidden; /*!!!*/
   }
@@ -24,14 +27,14 @@
       <template v-else>
         <template v-if="auth">
           <h1 class="item">TITLE</h1>
-          <input type="text" @keyup="search($event)">
+          <input type="text" v-model="name" @keyup="search">
           <button type="button" @click="add">ADD</button>
           <button type="button" @click="file">FILE</button>
           <button type="button" @click="logout">LOGOUT</button>
         </template>
 
         <form @submit.prevent="login" v-else>
-          <input type="text" placeholder="Name" v-model="name">
+          <input type="text" placeholder="Keyword" v-model="name" @keyup="search">
           <input type="password" placeholder="Password" v-model="passwd">
           <button type="submit">LOGIN</button>
         </form>
@@ -61,6 +64,9 @@
       login() {
         get(this.name, {passwd:this.passwd}).then(data => {
           localStorage.user = JSON.stringify(data)
+          this.name = ''
+          this.search()
+          this.passwd = ''
           this.$dispatch('login')
         })
       },
@@ -74,8 +80,8 @@
       file() {
         location.assign(`#/file`)
       },
-      search(e) {
-        this.$dispatch('search', e.target.value)
+      search() {
+        this.$dispatch('search', this.name)
       }
     }
   }

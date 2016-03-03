@@ -18,12 +18,16 @@ export function getSrc(id) {
   return new Promise(resolve => {
     if (privacy) {
       get(`img/${id}`, {file:true}).then(data => {
-        var blob = new Blob([data])
+        var type = ''
+        if (String(id).match(/svg/i) !== null) type = 'image/svg+xml'
+        var blob = new Blob([data], {type})
         resolve(URL.createObjectURL(blob))
       })
     } else {
       let url = `${cdn}/img/${id}@.jpg`
       // let url = `${cdn}/img/${id}?imageMogr2/format/jpg` //qn
+
+      if (String(id).match(/(gif|svg)/i) !== null) url = `${cdn}/img/${id}`
       resolve(url)
     }
   })

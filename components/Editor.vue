@@ -32,6 +32,7 @@
     width: 90px;
     box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
     overflow: hidden;
+    position: relative;
   }
   .upload-box img {
     max-width: 140%;
@@ -58,6 +59,19 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.2);
   }
+  .upload-box .erase {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 24px;
+    background-color: rgba(255, 0, 0, 0.42);
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    line-height: 24px;
+    color: white;
+  }
 </style>
 
 <template>
@@ -73,6 +87,7 @@
 
         <div class="thumbnail" v-for="id in item.img | orderBy true">
           <Picture :id="id"></Picture>
+          <i class="erase" @click="erase(id)">ERASE</i>
         </div>
       </div>
 
@@ -126,7 +141,8 @@
         var progress = document.getElementById('progress')
 
         var readAndUpload = (file, index) => {
-          var id = Date.now() * 1000 + index
+          var fileType = file.name.slice(file.name.lastIndexOf('.'))
+          var id = Date.now() * 1000 + index + fileType
           var reader = new FileReader()
           reader.onload = () => {
             upload(`img/${id}`, reader.result, {file:true,progress}).then(() => {
@@ -139,6 +155,12 @@
         if (files.length > 0) {
           [...files].forEach(readAndUpload)
         }
+      },
+
+      erase(id) {
+        upload(`img/${id}`, {}).then(() => {
+          this.item.img = this.item.img.filter(el => el !== id)
+        })
       },
     },
 

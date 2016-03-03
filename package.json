@@ -9,22 +9,22 @@
   },
   "author": "xuyingjie",
   "license": "MIT",
-  "devDependencies": {
-    "babel-core": "^6.5.2",
-    "babel-loader": "^6.2.3",
-    "babel-plugin-transform-runtime": "^6.5.2",
-    "babel-preset-es2015": "^6.5.0",
+  "dependencies": {
+    "babel-core": "^6.6.0",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-runtime": "^6.6.0",
+    "babel-preset-es2015": "^6.6.0",
     "babel-runtime": "^5.8.35",
     "crypto-js": "^3.1.6",
     "css-loader": "^0.23.1",
     "eslint-plugin-html": "^1.4.0",
     "marked": "^0.3.5",
-    "vue": "^1.0.16",
+    "vue": "^1.0.17",
     "vue-hot-reload-api": "^1.3.2",
     "vue-html-loader": "^1.2.0",
-    "vue-loader": "^8.1.4",
+    "vue-loader": "^8.2.0",
     "vue-style-loader": "^1.0.0",
-    "webpack": "^1.12.13",
+    "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1"
   }
 }
