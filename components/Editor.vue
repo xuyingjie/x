@@ -142,7 +142,7 @@
 
         var readAndUpload = (file, index) => {
           var fileType = file.name.slice(file.name.lastIndexOf('.'))
-          var id = Date.now() * 1000 + index + fileType
+          var id = Date.now() + index + fileType
           var reader = new FileReader()
           reader.onload = () => {
             upload(`img/${id}`, reader.result, {file:true,progress}).then(() => {

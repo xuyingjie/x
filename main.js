@@ -86,7 +86,7 @@ new Vue({
 
   events: {
     init() {
-      if ((privacy && this.auth) || !privacy) {
+      if ((this.auth) || !privacy) {
         this.cache()
       }
     },
