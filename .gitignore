@@ -1,2 +1,6 @@
 node_modules/
-build.js
+build/
+.vscode/
+npm-debug.log
+debug.log
+yarn.lock

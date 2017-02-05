@@ -1,34 +1,67 @@
-module.exports = {
-  // entry point of our application
-  entry: './main.js',
-  // where to place the compiled bundle
-  output: {
-    path: __dirname,
-    filename: 'build.js'
-  },
-  module: {
-    // `loaders` is an array of loaders to use.
-    // here we are only configuring vue-loader
-    loaders: [
-      {
-        test: /\.vue$/, // a regex for matching all files that end in `.vue`
-        loader: 'vue'   // loader to use for matched files
-      },
-      // https://babeljs.io/docs/setup/#webpack
-      // https://github.com/babel/babel-loader  //Webpack plugin for Babel
-      {
-        // use babel-loader for *.js files
-        test: /\.js$/,
-        loader: 'babel',
-        // important: exclude files in node_modules
-        // otherwise it's going to be really slow!
-        exclude: /node_modules/
-      }
-    ]
-  },
+const path = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-  babel: {
-    presets: ['es2015'],
-    // plugins: ['transform-runtime']
-  }
+module.exports = {
+    entry: './src/main.js',
+    output: {
+        path: path.resolve(__dirname, './build'),
+        filename: '[name].js'
+    },
+    module: {
+        rules: [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /\.(png|jpg|gif|svg)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]?[hash]'
+                }
+            }
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: 'index.html',
+            // favicon: './src/assets/favicon.ico'
+        })
+    ],
+    resolve: {
+        extensions: ['.js', '.vue', '.json'],
+        alias: {
+            'vue$': 'vue/dist/vue.common.js'
+        }
+    },
+    devServer: {
+        historyApiFallback: true,
+        noInfo: true
+    },
+    performance: {
+        hints: false
+    },
+    devtool: '#eval-source-map'
+}
+
+if (process.env.NODE_ENV === 'production') {
+    module.exports.output.filename = '[name].[chunkhash].js'
+
+    module.exports.devtool = false
+    // http://vue-loader.vuejs.org/en/workflow/production.html
+    module.exports.plugins = (module.exports.plugins || []).concat([
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        }),
+        new webpack.LoaderOptionsPlugin({
+            minimize: true
+        })
+    ])
 }
