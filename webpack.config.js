@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const BabiliPlugin = require('babili-webpack-plugin')
 
 module.exports = {
     entry: './src/main.js',
@@ -30,7 +31,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: 'index.html',
-            // favicon: './src/assets/favicon.ico'
+            favicon: './src/assets/favicon.ico'
         })
     ],
     resolve: {
@@ -41,7 +42,16 @@ module.exports = {
     },
     devServer: {
         historyApiFallback: true,
-        noInfo: true
+        noInfo: true,
+        // proxy: {
+        //     '/': {
+        //         target: '',
+        //         secure: false,
+        //         bypass: (req) => {
+        //             console.log(req.url)
+        //         }
+        //     }
+        // }
     },
     performance: {
         hints: false
@@ -60,6 +70,7 @@ if (process.env.NODE_ENV === 'production') {
                 NODE_ENV: '"production"'
             }
         }),
+        new BabiliPlugin(),
         new webpack.LoaderOptionsPlugin({
             minimize: true
         })

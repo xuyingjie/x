@@ -4,7 +4,7 @@ import { get, post } from './tools'
 
 Vue.use(Vuex)
 
-var store = new Vuex.Store({
+let store = new Vuex.Store({
     state: {
         auth: false,
 
@@ -20,7 +20,7 @@ var store = new Vuex.Store({
 
     getters: {
         filterSet: (state) => {
-            var re = new RegExp(state.keyword, 'i')
+            let re = new RegExp(state.keyword, 'i')
             return state.set.filter(el => (el.text.match(re)))
         },
 
@@ -99,7 +99,6 @@ var store = new Vuex.Store({
             } else {
                 commit('updateItem', item)
             }
-            location.replace('#/')
         },
 
         login({commit, dispatch}, user) {
@@ -114,10 +113,5 @@ var store = new Vuex.Store({
         }
     }
 })
-
-if (localStorage.user) {
-    store.commit('auth')
-    store.dispatch('loadList')
-}
 
 export default store

@@ -21,7 +21,7 @@
 
 <script>
     import Picture from '../components/Picture.vue'
-    import { post } from '../tools'
+    import { readFile, post } from '../tools'
 
     export default {
         components: { Picture },
@@ -50,7 +50,7 @@
         },
 
         methods: {
-            save() {
+            async save() {
                 if (this.item.img.length > 0 || this.item.text) {
                     this.item.lastChange = Date.now()
                     let isNew = false
@@ -58,26 +58,21 @@
                         this.item.id = Date.now()
                         isNew = true
                     }
-                    this.$store.dispatch('saveItem', {
-                        item: this.item,
-                        isNew
-                    })
+                    await this.$store.dispatch('saveItem', { item: this.item, isNew })
+                    location.replace('#/')
                 }
             },
 
             fileChange(event) {
-                var files = event.target.files
-                var progress = document.getElementById('progress')
+                let files = event.target.files
+                let progress = document.getElementById('progress')
 
-                var readAndUpload = (file, index) => {
-                    var fileType = file.name.slice(file.name.lastIndexOf('.'))
-                    var id = Date.now() + index + fileType
-                    var reader = new FileReader()
-                    reader.onload = async () => {
-                        await post(`img/${id}`, reader.result, { file: true, progress })
-                        this.item.img.push(id)
-                    }
-                    reader.readAsArrayBuffer(file)
+                let readAndUpload = async (file, index) => {
+                    let fileType = file.name.slice(file.name.lastIndexOf('.'))
+                    let id = Date.now() + index + fileType
+                    let result = await readFile(file)
+                    await post(`img/${id}`, result, { file: true, progress })
+                    this.item.img.push(id)
                 }
 
                 if (files.length > 0) {

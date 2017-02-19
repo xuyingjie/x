@@ -15,7 +15,7 @@
 </template>
 
 <script>
-    import { get, post } from '../tools'
+    import { get, post, readFile } from '../tools'
 
     export default {
         data() {
@@ -25,39 +25,36 @@
         },
 
         methods: {
-            fileChange(event) {
-                var file = event.target.files[0]
+            async fileChange(event) {
+                let file = event.target.files[0]
                 if (file) {
-                    var progress = document.getElementById('progress')
-                    var id = Date.now()
-                    var item = {
+                    let progress = document.getElementById('progress')
+                    let id = Date.now()
+                    let item = {
                         id,
                         name: file.name,
                         size: file.size,
                         type: file.type,
                     }
-                    var list = [item, ...this.list]
+                    let list = [item, ...this.list]
 
-                    var reader = new FileReader()
-                    reader.onload = async () => {
-                        await post(`file/${id}`, reader.result, { file: true, progress })
-                        await post('filelist', { list })
-                        this.list = list
-                    }
-                    reader.readAsArrayBuffer(file)
+                    let result = await readFile(file)
+                    await post(`file/${id}`, result, { file: true, progress })
+                    await post('filelist', { list })
+                    this.list = list
                 }
             },
 
             async download(file) {
-                var progress = document.getElementById(file.id)
+                let progress = document.getElementById(file.id)
                 let data = await get(`file/${file.id}`, { file: true, progress })
-                var blob = new Blob([data], {
+                let blob = new Blob([data], {
                     'type': file.type,
                 })
-                var objecturl = URL.createObjectURL(blob)
+                let objecturl = URL.createObjectURL(blob)
 
                 // 生成下载
-                var anchor = document.createElement('a')
+                let anchor = document.createElement('a')
                 anchor.href = objecturl
 
                 // 新标签页打开
@@ -67,7 +64,7 @@
                 anchor.download = file.name
 
                 document.body.appendChild(anchor)
-                var evt = document.createEvent('MouseEvents')
+                let evt = document.createEvent('MouseEvents')
                 evt.initEvent('click', true, true)
                 anchor.dispatchEvent(evt)
                 document.body.removeChild(anchor)

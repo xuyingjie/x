@@ -16,13 +16,11 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects
 `TypedArray.of(element0[, element1[, ...[, elementN]]])`  
 `TypedArray.from(source[, mapFn[, thisArg]])`
 
-`new TextEncoder('utf-16').encode(string)`  
+`new TextEncoder().encode(string)`  
 `window.crypto.getRandomValues(new Uint8Array(12))`  
 `window.crypto.getRandomValues(new Uint32Array(1))[0]`  
 
 ### Flex
-http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html  
-http://www.ruanyifeng.com/blog/2015/07/flex-examples.html  
 
 `display: flex;`  
 `flex-direction: row | row-reverse | column | column-reverse;`  

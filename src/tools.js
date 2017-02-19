@@ -6,9 +6,9 @@ const postUrl = 'http://upload.qiniu.com'
 
 export async function getSrc(id) {
     let data = await get(`img/${id}`, { file: true })
-    var type = ''
+    let type = ''
     if (String(id).match(/svg/i) !== null) type = 'image/svg+xml'
-    var blob = new Blob([data], { type })
+    let blob = new Blob([data], { type })
     return URL.createObjectURL(blob)
 }
 
@@ -35,7 +35,7 @@ export async function post(key, data, { file, progress, passwd } = {}) {
 function _get(key, { responseType, progress } = {}) {
     return new Promise(resolve => {
 
-        var xhr = new XMLHttpRequest()
+        let xhr = new XMLHttpRequest()
         xhr.open('GET', `${url}/${key}`)
         xhr.responseType = responseType ? responseType : 'arraybuffer'
 
@@ -55,9 +55,9 @@ function _get(key, { responseType, progress } = {}) {
 
 function _post(key, data, { progress } = {}) {
     return new Promise(async resolve => {
-        var form = await createForm(key, data)
+        let form = await createForm(key, data)
 
-        var xhr = new XMLHttpRequest()
+        let xhr = new XMLHttpRequest()
         xhr.open('POST', postUrl)
 
         if (progress) xhr.upload.onprogress = (e) => {
@@ -101,4 +101,14 @@ async function createToken(key) {
 
     const signature = await crypto.b64HmacSHA1(SK, policy)
     return `${AK}:${signature.replace(/\+/g, '-').replace(/\//g, '_')}:${policy}`
+}
+
+export function readFile(file) {
+    return new Promise(resolve => {
+        let reader = new FileReader()
+        reader.onload = () => {
+            resolve(reader.result)
+        }
+        reader.readAsArrayBuffer(file)
+    })
 }

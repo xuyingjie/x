@@ -10,3 +10,8 @@ new Vue({
     store: store,
     template: '<router-view></router-view>'
 })
+
+if (localStorage.user) {
+    store.commit('auth')
+    store.dispatch('loadList')
+}
