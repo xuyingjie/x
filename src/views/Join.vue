@@ -2,23 +2,23 @@
     <form class="row join" @submit.prevent="join">
         <label>
             Name
-            <input type="text" v-model="name" />
+            <input type="text" v-model="name">
         </label>
         <label>
             Password
-            <input type="text" v-model="passwd" />
+            <input type="text" v-model="passwd">
         </label>
         <label>
             Key
-            <input type="text" v-model="user.key" />
+            <input type="text" v-model="user.key">
         </label>
         <label>
             AK
-            <input type="text" v-model="user.AK" />
+            <input type="text" v-model="user.AK">
         </label>
         <label>
             SK
-            <input type="text" v-model="user.SK" />
+            <input type="text" v-model="user.SK">
         </label>
         <button type="submit">JOIN</button>
     </form>

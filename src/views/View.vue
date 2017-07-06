@@ -1,7 +1,7 @@
 <template>
     <div class="view layer">
         <section class="row card">
-            <Picture :id="id" v-for="id in item.img"></Picture>
+            <Picture v-for="id in item.img" :id="id" :key="id"></Picture>
 
             <div class="content" v-if="text" v-html="text"></div>
         </section>

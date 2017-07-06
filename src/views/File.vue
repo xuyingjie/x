@@ -6,7 +6,7 @@
                 <input type="file" @change="fileChange($event)">
                 <i id="progress"></i>
             </label>
-            <button type="button" v-for="item in list" @click="download(item)">
+            <button type="button" v-for="item in list" :key="item.id" @click="download(item)">
                 {{item.name}} - {{(item.size/1024).toFixed(2) + 'KB'}}
                 <i :id="item.id"></i>
             </button>
