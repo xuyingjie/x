@@ -25,42 +25,43 @@
 </template>
 
 <script>
-    import { post } from '../tools'
+import { post } from '../tools'
 
-    export default {
-        data() {
-            return {
-                name: '',
-                passwd: '',
+export default {
+    data() {
+        return {
+            name: '',
+            passwd: '',
 
-                user: {
-                    AK: '',
-                    SK: '',
-                    key: '',
-                }
-            }
-        },
-
-        methods: {
-            async join() {
-                localStorage.user = JSON.stringify(this.user)
-
-                await post(this.name, this.user, { passwd: this.passwd })
-                console.log('success')
+            user: {
+                AK: '',
+                SK: '',
+                key: '',
             }
         }
+    },
+
+    methods: {
+        async join() {
+            localStorage.user = JSON.stringify(this.user)
+
+            await post(this.name, this.user, { passwd: this.passwd })
+            // console.log('success')
+            this.name = 'success'
+        }
     }
+}
 
 </script>
 
 <style scoped>
-    .join {
-        max-width: 960px;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .join label {
-        margin: 5px 0;
-    }
+.join {
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+}
+
+.join label {
+    margin: 5px 0;
+}
 </style>

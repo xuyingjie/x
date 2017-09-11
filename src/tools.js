@@ -1,8 +1,8 @@
 import crypto from './webcrypto'
 
-const bucket = ''
-const url = 'http://7xpqe2.com1.z0.glb.clouddn.com'
-const postUrl = 'http://upload.qiniu.com'
+const bucket = 'xu-test'
+const url = 'http://ow3fv7mzv.bkt.clouddn.com'
+const postUrl = 'http://up-z1.qiniu.com'
 
 export async function getSrc(id) {
     let data = await get(`img/${id}`, { file: true })
@@ -14,13 +14,17 @@ export async function getSrc(id) {
 
 export async function get(key, { file, progress, passwd } = {}) {
     if (key.match(/(img|file)\//) === null) key = `${key}?v=${Date.now()}`
-    let data = await _get(key, { progress })
+    try {
+        let data = await _get(key, { progress })
 
-    if (!passwd) passwd = JSON.parse(localStorage.user).key
-    let out = await crypto.decrypt(passwd, data)
+        if (!passwd) passwd = JSON.parse(localStorage.user).key
+        let out = await crypto.decrypt(passwd, data)
 
-    if (!file) out = JSON.parse(crypto.arrayBufferToStr(out))
-    return out
+        if (!file) out = JSON.parse(crypto.arrayBufferToStr(out))
+        return out
+    } catch (err) {
+        return
+    }
 }
 
 export async function post(key, data, { file, progress, passwd } = {}) {
@@ -33,7 +37,7 @@ export async function post(key, data, { file, progress, passwd } = {}) {
 }
 
 function _get(key, { responseType, progress } = {}) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
 
         let xhr = new XMLHttpRequest()
         xhr.open('GET', `${url}/${key}`)
@@ -46,6 +50,8 @@ function _get(key, { responseType, progress } = {}) {
         xhr.onload = () => {
             if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
                 resolve(xhr.response)
+            } else {
+                reject(xhr.status)
             }
         }
 

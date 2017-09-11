@@ -71,13 +71,13 @@ let store = new Vuex.Store({
     },
 
     actions: {
-        async loadList({commit, dispatch}) {
-            let out = await get('list')
+        async loadList({ commit, dispatch }) {
+            let out = await get('list') || { list: [] }
             commit('initList', out.list)
             dispatch('loadItem')
         },
 
-        loadItem({state, commit}, loadAll = false) {
+        loadItem({ state, commit }, loadAll = false) {
             let end = loadAll ? state.list.length : state.index + state.count
 
             state.list.slice(state.index, end).forEach(async id => {
@@ -88,7 +88,7 @@ let store = new Vuex.Store({
             })
         },
 
-        async saveItem({state, commit}, {item, isNew}) {
+        async saveItem({ state, commit }, { item, isNew }) {
             await post(`set/${item.id}`, item)
             if (isNew) {
                 let list = [item.id, ...state.list]
@@ -101,13 +101,13 @@ let store = new Vuex.Store({
             }
         },
 
-        login({commit, dispatch}, user) {
+        login({ commit, dispatch }, user) {
             localStorage.user = JSON.stringify(user)
             commit('auth')
             dispatch('loadList')
         },
 
-        logout({commit}) {
+        logout({ commit }) {
             localStorage.removeItem('user')
             commit('clear')
         }
