@@ -6,10 +6,10 @@
 
         <div class="row space-between" v-else>
             <div class="col">
-                <Callout class="fadedown-enter" v-for="(item, index) in evenSet" :item="item" :key="item.id"></Callout>
+                <Callout class="fadedown-enter" v-for="item in evenSet" :item="item" :key="item.id"></Callout>
             </div>
             <div class="col">
-                <Callout class="fadedown-enter" v-for="(item, index) in oddSet" :item="item" :key="item.id"></Callout>
+                <Callout class="fadedown-enter" v-for="item in oddSet" :item="item" :key="item.id"></Callout>
             </div>
         </div>
 
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import Callout from '../components/Callout'
+import Callout from '@/components/Callout'
 
 export default {
     components: { Callout },
@@ -30,6 +30,9 @@ export default {
     },
 
     computed: {
+        auth() {
+            return this.$store.state.auth
+        },
         set() {
             return this.$store.getters.filterSet
         },
@@ -46,7 +49,7 @@ export default {
 
     methods: {
         resize() {
-            this.small = (window.innerWidth < 800) ? true : false
+            this.small = window.innerWidth < 800 ? true : false
         },
         more() {
             this.$store.dispatch('loadItem')
@@ -54,6 +57,10 @@ export default {
     },
 
     created() {
+        if (this.auth) {
+            this.$store.dispatch('loadList')
+        }
+
         this.resize()
         window.onresize = this.resize
     }
@@ -79,7 +86,7 @@ export default {
     padding-left: 10px;
 }
 
-.fragment>button {
+.fragment > button {
     display: block;
     margin: 0 auto;
 }

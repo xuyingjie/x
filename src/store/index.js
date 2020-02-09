@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { get, post } from './tools'
+import { get, post } from '@/utils/tools'
 
 Vue.use(Vuex)
 
-let store = new Vuex.Store({
+export default new Vuex.Store({
     state: {
-        auth: false,
+        auth: Boolean(localStorage.user),
 
         list: [],
         set: [],
@@ -15,18 +15,19 @@ let store = new Vuex.Store({
         count: 7,
 
         keyword: '',
-        currentItemId: ''
+        currentItemId: '',
     },
 
     getters: {
-        filterSet: (state) => {
-            let re = new RegExp(state.keyword, 'i')
-            return state.set.filter(el => (el.text.match(re)))
+        filterSet: state => {
+            const re = new RegExp(state.keyword, 'i')
+            return state.set.filter(el => el.text.match(re))
         },
 
         hasMore: state => state.list.length > state.index,
 
-        currentItem: state => state.set.find(el => el.id === +state.currentItemId)
+        currentItem: state =>
+            state.set.find(el => el.id === +state.currentItemId) || { img: [], text: '' },
     },
 
     mutations: {
@@ -51,7 +52,7 @@ let store = new Vuex.Store({
         },
 
         updateItem(state, item) {
-            state.set = state.set.map(el => el.id === item.id ? item : el)
+            state.set = state.set.map(el => (el.id === item.id ? item : el))
         },
 
         setCurrentItemId(state, id) {
@@ -67,51 +68,40 @@ let store = new Vuex.Store({
             state.list = []
             state.set = []
             state.index = 0
-        }
+        },
     },
 
     actions: {
         async loadList({ commit, dispatch }) {
-            let out = await get('list') || { list: [] }
+            const out = (await get('list')) || { list: [] }
             commit('initList', out.list)
             dispatch('loadItem')
         },
 
         loadItem({ state, commit }, loadAll = false) {
-            let end = loadAll ? state.list.length : state.index + state.count
+            const end = loadAll ? state.list.length : state.index + state.count
 
             state.list.slice(state.index, end).forEach(async id => {
                 commit('indexIncrement')
 
-                let item = await get(`set/${id}`)
+                const item = await get(`paper/${id}`)
                 commit('initSet', item)
             })
         },
 
-        async saveItem({ state, commit }, { item, isNew }) {
-            await post(`set/${item.id}`, item)
-            if (isNew) {
-                let list = [item.id, ...state.list]
+        async saveItem({ state, commit }, item) {
+            const paper = { id: Date.now(), ...item, lastChange: Date.now() }
+            await post(`paper/${paper.id}`, paper)
+
+            if (!item.id) {
+                const list = [paper.id, ...state.list]
                 await post('list', { list })
                 commit('initList', list)
-                commit('addItem', item)
+                commit('addItem', paper)
                 commit('indexIncrement')
             } else {
-                commit('updateItem', item)
+                commit('updateItem', paper)
             }
         },
-
-        login({ commit, dispatch }, user) {
-            localStorage.user = JSON.stringify(user)
-            commit('auth')
-            dispatch('loadList')
-        },
-
-        logout({ commit }) {
-            localStorage.removeItem('user')
-            commit('clear')
-        }
-    }
+    },
 })
-
-export default store

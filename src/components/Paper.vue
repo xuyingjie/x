@@ -3,13 +3,13 @@
         <section class="row card">
             <enc-image v-for="id in item.img" :id="id" :key="id"></enc-image>
 
-            <div class="content" v-if="text" v-html="text"></div>
+            <div class="content" v-html="text"></div>
         </section>
     </div>
 </template>
 
 <script>
-import EncImage from '../components/EncImage.vue'
+import EncImage from '@/components/EncImage.vue'
 import marked from 'marked'
 
 export default {
@@ -22,15 +22,12 @@ export default {
             return this.$store.getters.currentItem
         },
         text() {
-            return marked(this.item.text, {
-                breaks: true,
-                sanitize: true
-            })
+            return marked(this.item.text, { breaks: true })
         }
     },
 
     created() {
-        let id = this.$route.params.id
+        const id = this.$route.params.id
         this.$store.commit('setCurrentItemId', id)
     },
 
@@ -51,7 +48,7 @@ export default {
     word-wrap: break-word;
 }
 
-.view pre>code {
+.view pre > code {
     word-wrap: normal;
 }
 

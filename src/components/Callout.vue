@@ -1,7 +1,7 @@
 <template>
     <div class="callout card">
         <router-link :to="`/view/${item.id}`" class="block">
-            <enc-image :id="src" :key="src" v-if="src"></enc-image>
+            <enc-image v-if="src" :id="src" :key="src"></enc-image>
             <pre v-if="text"><code>{{text}}</code></pre>
         </router-link>
 
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import EncImage from './EncImage'
+import EncImage from '@/components/EncImage'
 
 export default {
     components: { EncImage },
@@ -40,14 +40,14 @@ export default {
     margin: 0;
 }
 
-.callout pre>code {
+.callout pre > code {
     border: none;
     background-color: #fefefe;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
-.callout pre:first-child>code {
+.callout pre:first-child > code {
     min-height: 90px;
 }
 

@@ -8,7 +8,7 @@
 
                 <template v-else>
                     <h1 class="item">X</h1>
-                    <input type="text" v-model="keyword" @keyup="search">
+                    <input type="text" v-model="keyword" @keyup="search" />
                     <router-link class="button" to="/edit">ADD</router-link>
                     <router-link class="button" to="/file">FILE</router-link>
                     <button type="button" @click="logout">LOGOUT</button>
@@ -16,8 +16,8 @@
             </template>
 
             <form @submit.prevent="login" v-else>
-                <input type="text" v-model="name">
-                <input type="password" v-model="passwd">
+                <input type="text" v-model="name" />
+                <input type="password" v-model="passwd" />
                 <button type="submit">LOGIN</button>
             </form>
         </nav>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { get } from '../tools'
+import { get } from '@/utils/tools'
 
 export default {
     data() {
@@ -50,13 +50,17 @@ export default {
 
     methods: {
         async login() {
-            let user = await get(this.name, { passwd: this.passwd })
-            this.name = ''
-            this.passwd = ''
-            this.$store.dispatch('login', user)
+            const user = await get(this.name, { passwd: this.passwd })
+            if (user) {
+                localStorage.user = JSON.stringify(user)
+                this.$store.commit('auth')
+                this.$store.dispatch('loadList')
+                this.name = ''
+            }
         },
         logout() {
-            this.$store.dispatch('logout')
+            localStorage.removeItem('user')
+            this.$store.commit('clear')
         },
         search() {
             if (this.hasMore) {
@@ -80,8 +84,8 @@ export default {
     align-items: center;
 }
 
-.bar input[type=password],
-.bar button[type=submit] {
+.bar input[type="password"],
+.bar button[type="submit"] {
     opacity: 0.42;
 }
 

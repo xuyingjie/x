@@ -1,9 +1,9 @@
 <template>
-    <img :src="src">
+    <img :src="src" />
 </template>
 
 <script>
-import { getSrc } from '../tools'
+import { getSrc } from '@/utils/tools'
 
 export default {
     props: ['id'],

@@ -3,7 +3,7 @@
         <div class="row card">
             <label class="button">
                 SELECT FILE
-                <input type="file" @change="fileChange($event)">
+                <input type="file" @change="fileChange($event)" />
                 <i id="progress"></i>
             </label>
             <button type="button" v-for="item in list" :key="item.id" @click="download(item)">
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { get, post, readFile } from '../tools'
+import { get, post, readAsArrayBuffer } from '@/utils/tools'
 
 export default {
     data() {
@@ -26,45 +26,43 @@ export default {
 
     methods: {
         async fileChange(event) {
-            let file = event.target.files[0]
+            const file = event.target.files[0]
             if (file) {
-                let progress = document.getElementById('progress')
-                let id = Date.now()
-                let item = {
+                const progress = document.getElementById('progress')
+                const id = Date.now()
+                const item = {
                     id,
                     name: file.name,
                     size: file.size,
                     type: file.type,
                 }
-                let list = [item, ...this.list]
+                const list = [item, ...this.list]
 
-                let result = await readFile(file)
+                const result = await readAsArrayBuffer(file)
                 await post(`file/${id}`, result, { file: true, progress })
                 await post('filelist', { list })
                 this.list = list
             }
         },
 
-        async download(file) {
-            let progress = document.getElementById(file.id)
-            let data = await get(`file/${file.id}`, { file: true, progress })
-            let blob = new Blob([data], {
-                'type': file.type,
-            })
-            let objecturl = URL.createObjectURL(blob)
+        async download({ id, name, type }) {
+            const progress = document.getElementById(id)
+            const data = await get(`file/${id}`, { file: true, progress })
+            const blob = new Blob([data], { type })
+            const objecturl = URL.createObjectURL(blob)
 
             // 生成下载
-            let anchor = document.createElement('a')
+            const anchor = document.createElement('a')
             anchor.href = objecturl
 
             // 新标签页打开
             // anchor.target = '_blank'
 
             // 直接下载
-            anchor.download = file.name
+            anchor.download = name
 
             document.body.appendChild(anchor)
-            let evt = document.createEvent('MouseEvents')
+            const evt = document.createEvent('MouseEvents')
             evt.initEvent('click', true, true)
             anchor.dispatchEvent(evt)
             document.body.removeChild(anchor)
@@ -72,7 +70,7 @@ export default {
     },
 
     async created() {
-        let data = await get('filelist')
+        const data = await get('filelist')
         if (data) this.list = data.list
     }
 }
@@ -80,7 +78,7 @@ export default {
 </script>
 
 <style scoped>
-.file>.card {
+.file > .card {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -88,7 +86,7 @@ export default {
 }
 
 @media screen and (max-width: 39.9375em) {
-    .file>.card {
+    .file > .card {
         padding: 0.5rem;
     }
 }
@@ -105,12 +103,12 @@ export default {
     margin-bottom: 1rem;
 }
 
-.file input[type=file] {
+.file input[type="file"] {
     display: none;
 }
 
 .file #progress,
-.file button>i {
+.file button > i {
     position: absolute;
     left: 0;
     bottom: 0;
