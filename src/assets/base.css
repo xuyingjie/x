@@ -86,8 +86,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Helvetica Neue", Helvetica, Roboto, Arial, "Open Sans", 方正悠黑,
-    汉仪旗黑, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Roboto, Arial, "Open Sans",
+    "Microsoft YaHei", sans-serif;
   font-weight: normal;
   font-style: normal;
   color: #222222;
@@ -215,16 +215,16 @@ kbd {
   margin: 0;
   background-color: #e6e6e6;
   color: #0a0a0a;
-  font-family: "Source Code Pro", Consolas, "Liberation Mono", Courier, 方正悠黑,
-    monospace;
+  font-family: "Source Code Pro", Consolas, "Liberation Mono", Courier,
+    "Microsoft YaHei", monospace;
 }
 
 pre {
   margin-bottom: 1rem;
 }
 code {
-  font-family: "Source Code Pro", Consolas, "Liberation Mono", Courier, 方正悠黑,
-    monospace;
+  font-family: "Source Code Pro", Consolas, "Liberation Mono", Courier,
+    "Microsoft YaHei", monospace;
   font-weight: normal;
   color: #0a0a0a;
   padding: 0px 5px;
@@ -284,7 +284,7 @@ button,
   position: relative;
 
   height: 36px;
-  min-width: 64px;
+  /* min-width: 64px; */
   padding: 0 1rem;
   line-height: 36px;
 
@@ -324,15 +324,9 @@ textarea {
   padding: 0 1rem;
 }
 .layer {
-  position: fixed;
-  top: 64px;
-  right: 0;
-  bottom: 0;
-  left: 0;
   background: #eee;
-  z-index: 9;
   overflow: auto;
-  padding: 0 1rem;
+  padding: 64px 1rem;
 }
 .card {
   background: #fefefe;
@@ -352,8 +346,7 @@ textarea {
   pre > code {
     padding: 0.5rem;
   }
-  .bar,
-  .layer {
+  .bar {
     padding: 0 5px;
   }
   .bar {
@@ -372,58 +365,9 @@ textarea {
     font-size: 20px;
   }
   .layer {
-    top: 48px;
+    padding: 48px 5px;
   }
   .layer > .row {
     margin-top: 10px;
   }
-}
-
-/*https://github.com/daneden/animate.css*/
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -100%, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes fadeOutDown {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(0, 100%, 0);
-  }
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-.fadedown-enter {
-  animation: fadeInDown 0.3s;
-}
-.fadedown-leave {
-  animation: fadeOutDown 0.3s;
-}
-.fade-enter {
-  animation: fadeIn 0.1s;
-}
-.fade-leave {
-  animation: fadeOut 0.1s;
 }

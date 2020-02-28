@@ -1,3 +1,16 @@
+🍀🌼🍄🍂🐌🐛🐜
+
+响应式
+数据如何确保响应的问题
+
+``` js
+// reactive state
+const state = reactive({
+  count: 0,
+  double: computed(() => state.count * 2),
+})
+```
+
 
 ### ArrayBuffer
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray

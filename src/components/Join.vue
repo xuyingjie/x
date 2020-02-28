@@ -9,45 +9,54 @@
             <input type="text" v-model="passwd" />
         </label>
         <label>
-            Key
-            <input type="text" v-model="user.key" />
-        </label>
-        <label>
             AccessKeyId
-            <input type="text" v-model="user.accessKeyId" />
+            <input type="text" v-model="accessKeyId" />
         </label>
         <label>
             AccessKeySecret
-            <input type="text" v-model="user.accessKeySecret" />
+            <input type="text" v-model="accessKeySecret" />
         </label>
-        <button type="submit">JOIN</button>
+        <label>
+            CryptoKey
+            <input type="text" v-model="cryptoKey" />
+        </label>
+        <button class="card" type="submit">JOIN</button>
     </form>
 </template>
 
 <script>
-import { post } from '@/utils/tools'
+import { reactive, toRefs } from 'vue'
+import { put } from '@/utils'
 
 export default {
-    data() {
-        return {
+    setup() {
+        const state = reactive({
             name: '',
             passwd: '',
+            accessKeyId: '',
+            accessKeySecret: '',
+            cryptoKey: '',
+        })
 
-            user: {
-                accessKeyId: '',
-                accessKeySecret: '',
-                key: '',
+        async function join() {
+            const user = {
+                cryptoKey: state.cryptoKey,
+                accessKeyId: state.accessKeyId,
+                accessKeySecret: state.accessKeySecret,
             }
+            localStorage.x = JSON.stringify(user)
+
+            const status = await put({
+                key: state.name,
+                data: user,
+                passwd: state.passwd,
+            })
+            state.name = status
         }
-    },
 
-    methods: {
-        async join() {
-            localStorage.user = JSON.stringify(this.user)
-
-            await post(this.name, this.user, { passwd: this.passwd })
-            // console.log('success')
-            this.name = 'success'
+        return {
+            ...toRefs(state),
+            join,
         }
     }
 }
@@ -55,20 +64,15 @@ export default {
 </script>
 
 <style scoped>
-.join {
-    max-width: 960px;
+form {
     display: flex;
     flex-direction: column;
-    background: #fff;
-
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 10;
+    align-items: flex-start;
 }
-
-.join label {
-    margin: 5px 0;
+form > * {
+    margin: 10px 0;
+}
+form label > input {
+    display: block;
 }
 </style>
